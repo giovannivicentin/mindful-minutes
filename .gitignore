@@ -134,3 +134,21 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+
+# env files
+.env*
+
+# vercel
+.vercel
+
+# production
+/build
+
+# macOS
+.DS_Store

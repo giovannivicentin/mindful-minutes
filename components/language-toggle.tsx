@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { usePathname, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,8 +9,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Globe } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { Globe } from "lucide-react";
 
 // Language options with their display names
 const languages = [
@@ -22,28 +22,32 @@ const languages = [
   { code: "zh", name: "中文" },
   { code: "ja", name: "日本語" },
   { code: "ar", name: "العربية" },
-]
+];
 
 // Group languages into primary and secondary
-const primaryLanguages = ["en", "pt-BR", "es"]
+const primaryLanguages = ["en", "pt-BR", "es"];
 
 export function LanguageToggle({ currentLocale }: { currentLocale: string }) {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
   const switchLocale = (locale: string) => {
     // Replace current locale in path with new locale
-    const pathParts = pathname.split("/")
-    if (pathParts.length > 1 && languages.some((lang) => lang.code === pathParts[1])) {
-      pathParts[1] = locale
+    const pathParts = pathname.split("/");
+    if (
+      pathParts.length > 1 &&
+      languages.some((lang) => lang.code === pathParts[1])
+    ) {
+      pathParts[1] = locale;
     } else {
-      pathParts.splice(1, 0, locale)
+      pathParts.splice(1, 0, locale);
     }
-    router.push(pathParts.join("/"))
-  }
+    router.push(pathParts.join("/"));
+  };
 
   // Get the current language display name
-  const currentLanguageName = languages.find((lang) => lang.code === currentLocale)?.name || "English"
+  const currentLanguageName =
+    languages.find((lang) => lang.code === currentLocale)?.name || "English";
 
   return (
     <DropdownMenu>
@@ -64,7 +68,9 @@ export function LanguageToggle({ currentLocale }: { currentLocale: string }) {
             <DropdownMenuItem
               key={lang.code}
               onClick={() => switchLocale(lang.code)}
-              className={currentLocale === lang.code ? "font-bold bg-muted" : ""}
+              className={
+                currentLocale === lang.code ? "font-bold bg-muted" : ""
+              }
             >
               {lang.name}
             </DropdownMenuItem>
@@ -79,12 +85,14 @@ export function LanguageToggle({ currentLocale }: { currentLocale: string }) {
             <DropdownMenuItem
               key={lang.code}
               onClick={() => switchLocale(lang.code)}
-              className={currentLocale === lang.code ? "font-bold bg-muted" : ""}
+              className={
+                currentLocale === lang.code ? "font-bold bg-muted" : ""
+              }
             >
               {lang.name}
             </DropdownMenuItem>
           ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

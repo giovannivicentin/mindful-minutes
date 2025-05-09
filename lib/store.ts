@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface Session {
-  practice: string
-  duration: number
-  date: string
+  practice: string;
+  duration: number;
+  date: string;
 }
 
 interface StoreState {
-  lastSelectedTimer: number | null
-  sessions: Session[]
-  setLastSelectedTimer: (minutes: number) => void
-  addSession: (session: Session) => void
+  lastSelectedTimer: number | null;
+  sessions: Session[];
+  setLastSelectedTimer: (minutes: number) => void;
+  addSession: (session: Session) => void;
 }
 
 export const useStore = create<StoreState>()(
@@ -29,6 +29,6 @@ export const useStore = create<StoreState>()(
     }),
     {
       name: "mindful-minutes-storage",
-    },
-  ),
-)
+    }
+  )
+);

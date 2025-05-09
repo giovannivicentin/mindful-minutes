@@ -1,12 +1,12 @@
-import { PracticeGrid } from "@/components/practice-grid"
-import { useTranslation } from "@/hooks/use-translation"
+import { PracticeGrid } from "@/components/practice-grid";
+import { useTranslation } from "@/hooks/use-translation";
 
 export default function PracticesPage({
   params,
 }: {
-  params: { locale: string }
+  params: { locale: string };
 }) {
-  const t = useTranslation(params.locale)
+  const t = useTranslation(params.locale);
 
   return (
     <div className="container py-8">
@@ -14,5 +14,5 @@ export default function PracticesPage({
       <p className="text-muted-foreground mb-8">{t("practices.description")}</p>
       <PracticeGrid locale={params.locale} />
     </div>
-  )
+  );
 }

@@ -1,16 +1,12 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { useTranslation } from "@/hooks/use-translation"
-import { ArrowRight, Brain, Heart, Leaf } from "lucide-react"
-import { FeaturedPractices } from "@/components/featured-practices"
-import { BenefitsSection } from "@/components/benefits-section"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/hooks/use-translation";
+import { ArrowRight, Brain, Heart, Leaf } from "lucide-react";
+import { FeaturedPractices } from "@/components/featured-practices";
+import { BenefitsSection } from "@/components/benefits-section";
 
-export default function HomePage({
-  params,
-}: {
-  params: { locale: string }
-}) {
-  const t = useTranslation(params.locale)
+export default function HomePage({ params }: { params: { locale: string } }) {
+  const t = useTranslation(params.locale);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -28,9 +24,13 @@ export default function HomePage({
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">{t("home.hero.title")}</h1>
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">
+              {t("home.hero.title")}
+            </h1>
 
-            <p className="max-w-[700px] text-lg md:text-xl text-muted-foreground">{t("home.hero.subtitle")}</p>
+            <p className="max-w-[700px] text-lg md:text-xl text-muted-foreground">
+              {t("home.hero.subtitle")}
+            </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
               <Link href={`/${params.locale}/practices`}>
@@ -66,8 +66,12 @@ export default function HomePage({
             <div className="inline-block p-2 bg-primary/10 rounded-full mb-2">
               <Brain className="h-6 w-6 text-primary" />
             </div>
-            <h2 className="text-3xl font-bold tracking-tighter">{t("home.featured.title")}</h2>
-            <p className="max-w-[700px] text-muted-foreground">{t("home.featured.subtitle")}</p>
+            <h2 className="text-3xl font-bold tracking-tighter">
+              {t("home.featured.title")}
+            </h2>
+            <p className="max-w-[700px] text-muted-foreground">
+              {t("home.featured.subtitle")}
+            </p>
           </div>
 
           <FeaturedPractices locale={params.locale} />
@@ -85,8 +89,12 @@ export default function HomePage({
       <section className="py-16 bg-primary/10">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center text-center space-y-4">
-            <h2 className="text-3xl font-bold tracking-tighter">{t("home.cta.title")}</h2>
-            <p className="max-w-[600px] text-muted-foreground mb-6">{t("home.cta.subtitle")}</p>
+            <h2 className="text-3xl font-bold tracking-tighter">
+              {t("home.cta.title")}
+            </h2>
+            <p className="max-w-[600px] text-muted-foreground mb-6">
+              {t("home.cta.subtitle")}
+            </p>
             <Link href={`/${params.locale}/practices`}>
               <Button size="lg" className="gap-2">
                 {t("home.cta.button")}
@@ -97,5 +105,5 @@ export default function HomePage({
         </div>
       </section>
     </div>
-  )
+  );
 }

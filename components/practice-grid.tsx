@@ -1,17 +1,32 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useTranslation } from "@/hooks/use-translation"
-import { TreesIcon as Lungs, Brain, Mountain, Eye, Activity, FileText, Heart, ListChecks } from "lucide-react"
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useTranslation } from "@/hooks/use-translation";
+import {
+  TreesIcon as Lungs,
+  Brain,
+  Mountain,
+  Eye,
+  Activity,
+  FileText,
+  Heart,
+  ListChecks,
+} from "lucide-react";
 
 interface PracticeCardProps {
-  title: string
-  description: string
-  icon: React.ReactNode
-  href: string
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  href: string;
 }
 
 function PracticeCard({ title, description, icon, href }: PracticeCardProps) {
@@ -20,7 +35,9 @@ function PracticeCard({ title, description, icon, href }: PracticeCardProps) {
       <Card className="h-full">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <div className="rounded-full bg-primary/10 p-2 text-primary">{icon}</div>
+            <div className="rounded-full bg-primary/10 p-2 text-primary">
+              {icon}
+            </div>
             <CardTitle>{title}</CardTitle>
           </div>
         </CardHeader>
@@ -29,11 +46,11 @@ function PracticeCard({ title, description, icon, href }: PracticeCardProps) {
         </CardContent>
       </Card>
     </Link>
-  )
+  );
 }
 
 export function PracticeGrid({ locale }: { locale: string }) {
-  const t = useTranslation(locale)
+  const t = useTranslation(locale);
 
   const practices = [
     {
@@ -84,7 +101,7 @@ export function PracticeGrid({ locale }: { locale: string }) {
       title: t("practices.combo.title"),
       description: t("practices.combo.description"),
     },
-  ]
+  ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -98,5 +115,5 @@ export function PracticeGrid({ locale }: { locale: string }) {
         />
       ))}
     </div>
-  )
+  );
 }

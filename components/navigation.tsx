@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useTranslation } from "@/hooks/use-translation"
-import { Menu, Home, Activity, User } from "lucide-react"
-import { LanguageToggle } from "@/components/language-toggle"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from "@/hooks/use-translation";
+import { Menu, Home, Activity, User } from "lucide-react";
+import { LanguageToggle } from "@/components/language-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Navigation() {
-  const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   // Extract locale from pathname
-  const pathParts = pathname.split("/")
-  const locale = pathParts.length > 1 && pathParts[1] ? pathParts[1] : "en"
+  const pathParts = pathname.split("/");
+  const locale = pathParts.length > 1 && pathParts[1] ? pathParts[1] : "en";
 
-  const t = useTranslation(locale)
+  const t = useTranslation(locale);
 
   // Determine active tab
   const getActiveTab = () => {
-    if (pathname.includes("/practices")) return "practices"
-    if (pathname.includes("/profile")) return "profile"
-    return "home"
-  }
+    if (pathname.includes("/practices")) return "practices";
+    if (pathname.includes("/profile")) return "profile";
+    return "home";
+  };
 
   const routes = [
     {
@@ -47,7 +47,7 @@ export default function Navigation() {
       icon: <User className="h-5 w-5" />,
       value: "profile",
     },
-  ]
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -102,5 +102,5 @@ export default function Navigation() {
         </div>
       </div>
     </header>
-  )
+  );
 }

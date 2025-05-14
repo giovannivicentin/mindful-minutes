@@ -58,6 +58,34 @@ export const en = {
       title: "Guided Breathing",
       description:
         "Expanding/contracting circle animation with optional mic feedback.",
+      selectPattern: "Select Breathing Pattern",
+      patterns: {
+        balanced: {
+          title: "Balanced Breathing (5-3-7)",
+          purpose:
+            "Balanced calming breath for general anxiety reduction and focus.",
+        },
+        box: {
+          title: "Box Breathing (4-4-4-4)",
+          purpose:
+            "Fast composure under acute stress, on-the-spot focus reset.",
+        },
+        relaxing: {
+          title: "4-7-8 Breathing",
+          purpose:
+            "Evening wind-down, easing anxious rumination, falling asleep.",
+        },
+        "balanced-simple": {
+          title: "Simple 5-5 Breathing",
+          purpose:
+            "Daily baseline anxiety control, sustained calm during work or study.",
+        },
+        sighing: {
+          title: "Double Inhale + Sighing Exhale",
+          purpose:
+            "Rapid relief of panic spikes; quick mood lift in under 2 minutes.",
+        },
+      },
     },
     meditation: {
       title: "Mindfulness Meditation",
@@ -69,9 +97,12 @@ export const en = {
       description: "Immersive landscapes with ambient sound and narration.",
     },
     tratak: {
-      title: "Trataka Meditation",
+      title: "Digital Tratak",
       description:
-        "Focus on a single point to calm the mind, enhance focus, and deepen mindfulness.",
+        "Focus on a single point to improve concentration and mindfulness.",
+      instructions: "Trataka Meditation Instructions",
+      instructionsText:
+        "Focus your gaze on the central point without blinking for as long as comfortable. When your eyes water, close them and visualize the point in your mind's eye. This practice improves concentration, enhances memory, and calms the mind. Practice for 5-10 minutes daily for best results.",
       customize: "Customize Appearance",
       circleSize: "Circle Size",
       circleColor: "Circle Color",
@@ -90,9 +121,6 @@ export const en = {
       fullscreenError: "Fullscreen Error",
       fullscreenErrorDesc:
         "Unable to enter fullscreen mode. This may be due to browser restrictions.",
-      instructions: "Trataka Meditation Instructions",
-      instructionsText:
-        "Focus your gaze on the central point without blinking for as long as comfortable. When your eyes water, close them and visualize the point in your mind's eye. This practice improves concentration, enhances memory, and calms the mind. Practice for 5–10 minutes daily for best results.",
     },
     "muscle-relaxation": {
       title: "Progressive Muscle Relaxation",
@@ -160,5 +188,6 @@ export const en = {
     continue: "Continue",
     back: "Back",
     close: "Close",
+    changeSettings: "Change Settings",
   },
 };

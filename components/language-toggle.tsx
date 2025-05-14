@@ -7,7 +7,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Globe } from "lucide-react";
@@ -23,9 +22,6 @@ const languages = [
   { code: "ja", name: "日本語" },
   { code: "ar", name: "العربية" },
 ];
-
-// Group languages into primary and secondary
-const primaryLanguages = ["en", "pt-BR", "es"];
 
 export function LanguageToggle({ currentLocale }: { currentLocale: string }) {
   const router = useRouter();
@@ -61,37 +57,16 @@ export function LanguageToggle({ currentLocale }: { currentLocale: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Primary Languages</DropdownMenuLabel>
-        {languages
-          .filter((lang) => primaryLanguages.includes(lang.code))
-          .map((lang) => (
-            <DropdownMenuItem
-              key={lang.code}
-              onClick={() => switchLocale(lang.code)}
-              className={
-                currentLocale === lang.code ? "font-bold bg-muted" : ""
-              }
-            >
-              {lang.name}
-            </DropdownMenuItem>
-          ))}
-
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel>Other Languages</DropdownMenuLabel>
-
-        {languages
-          .filter((lang) => !primaryLanguages.includes(lang.code))
-          .map((lang) => (
-            <DropdownMenuItem
-              key={lang.code}
-              onClick={() => switchLocale(lang.code)}
-              className={
-                currentLocale === lang.code ? "font-bold bg-muted" : ""
-              }
-            >
-              {lang.name}
-            </DropdownMenuItem>
-          ))}
+        <DropdownMenuLabel>Languages</DropdownMenuLabel>
+        {languages.map((lang) => (
+          <DropdownMenuItem
+            key={lang.code}
+            onClick={() => switchLocale(lang.code)}
+            className={currentLocale === lang.code ? "font-bold bg-muted" : ""}
+          >
+            {lang.name}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -11,6 +11,10 @@ import { ArrowLeft } from "lucide-react";
 import { BreathingPractice } from "@/components/practices/breathing-practice";
 import { MeditationPractice } from "@/components/practices/meditation-practice";
 import { TratakPractice } from "@/components/practices/tratak-practice";
+import {
+  BreathingPatternSelector,
+  type BreathingPattern,
+} from "@/components/practices/breathing-pattern-selector";
 import { useStore } from "@/lib/store";
 
 interface PracticeModuleProps {
@@ -24,6 +28,8 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [selectedBreathingPattern, setSelectedBreathingPattern] =
+    useState("balanced");
   const { addSession } = useStore();
 
   const handleTimerSelect = (minutes: number) => {
@@ -54,6 +60,76 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
     router.push(`/${locale}/practices`);
   };
 
+  // Add a new function to handle going back to the selection screen
+  const handleBackToSelection = () => {
+    setIsActive(false);
+    setIsPaused(false);
+  };
+
+  // Get the selected breathing pattern
+  const getSelectedBreathingPattern = (): BreathingPattern => {
+    const patterns = {
+      balanced: {
+        id: "balanced",
+        title: t("practices.breathing.patterns.balanced.title"),
+        purpose: t("practices.breathing.patterns.balanced.purpose"),
+        timing: {
+          inhale: 5,
+          holdAfterInhale: 3,
+          exhale: 7,
+          holdAfterExhale: 0,
+        },
+      },
+      box: {
+        id: "box",
+        title: t("practices.breathing.patterns.box.title"),
+        purpose: t("practices.breathing.patterns.box.purpose"),
+        timing: {
+          inhale: 4,
+          holdAfterInhale: 4,
+          exhale: 4,
+          holdAfterExhale: 4,
+        },
+      },
+      relaxing: {
+        id: "relaxing",
+        title: t("practices.breathing.patterns.relaxing.title"),
+        purpose: t("practices.breathing.patterns.relaxing.purpose"),
+        timing: {
+          inhale: 4,
+          holdAfterInhale: 7,
+          exhale: 8,
+          holdAfterExhale: 0,
+        },
+      },
+      "balanced-simple": {
+        id: "balanced-simple",
+        title: t("practices.breathing.patterns.balanced-simple.title"),
+        purpose: t("practices.breathing.patterns.balanced-simple.purpose"),
+        timing: {
+          inhale: 5,
+          holdAfterInhale: 0,
+          exhale: 5,
+          holdAfterExhale: 0,
+        },
+      },
+      sighing: {
+        id: "sighing",
+        title: t("practices.breathing.patterns.sighing.title"),
+        purpose: t("practices.breathing.patterns.sighing.purpose"),
+        timing: {
+          inhale: 3,
+          holdAfterInhale: 0,
+          exhale: 6,
+          holdAfterExhale: 1,
+          doubleInhale: true,
+        },
+      },
+    };
+
+    return patterns[selectedBreathingPattern as keyof typeof patterns];
+  };
+
   const renderPracticeComponent = () => {
     if (!selectedDuration || !isActive) return null;
 
@@ -64,6 +140,7 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
             locale={locale}
             duration={selectedDuration}
             isPaused={isPaused}
+            pattern={getSelectedBreathingPattern()}
           />
         );
       case "meditation":
@@ -112,6 +189,14 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
             <div className="space-y-6">
               <TimerSelector locale={locale} onSelect={handleTimerSelect} />
 
+              {practice === "breathing" && selectedDuration && (
+                <BreathingPatternSelector
+                  locale={locale}
+                  selectedPattern={selectedBreathingPattern}
+                  onPatternChange={setSelectedBreathingPattern}
+                />
+              )}
+
               {selectedDuration && (
                 <Button className="w-full" onClick={handleStart}>
                   {t("timer.start")}
@@ -120,15 +205,35 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
             </div>
           ) : (
             <div className="space-y-8">
-              <TimerProgress
-                durationMinutes={selectedDuration || 7}
-                locale={locale}
-                onComplete={handleComplete}
-                autoStart={true}
-                onActiveChange={handleTimerActiveChange}
-              />
+              <div className="flex justify-between items-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleBackToSelection}
+                  className="flex items-center gap-1"
+                >
+                  <ArrowLeft className="h-3 w-3" />
+                  {t("common.changeSettings")}
+                </Button>
 
+                <div className="text-sm text-muted-foreground">
+                  {selectedDuration} {t("timer.minutes")}
+                </div>
+              </div>
+
+              {/* Render the breathing animation first */}
               {renderPracticeComponent()}
+
+              {/* Timer controls below the animation */}
+              <div className="mt-8 pt-4 border-t">
+                <TimerProgress
+                  durationMinutes={selectedDuration || 7}
+                  locale={locale}
+                  onComplete={handleComplete}
+                  autoStart={true}
+                  onActiveChange={handleTimerActiveChange}
+                />
+              </div>
             </div>
           )}
         </CardContent>

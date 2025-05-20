@@ -35,7 +35,6 @@ export function TratakPractice({
   isPaused = false,
 }: TratakPracticeProps) {
   const t = useTranslation(locale);
-  // Get the current theme
   const { theme } = useTheme();
   const [showControls, setShowControls] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
@@ -44,7 +43,6 @@ export function TratakPractice({
   const tratakContainerRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Customization states with theme-aware defaults
   const [circleSize, setCircleSize] = useState(200);
   const [circleColor, setCircleColor] = useState(
     theme === "dark" ? "#FFFFFF" : "#000000"
@@ -59,7 +57,6 @@ export function TratakPractice({
   const [showPulsation, setShowPulsation] = useState(false);
   const [brightness, setBrightness] = useState(100);
 
-  // Update colors when theme changes
   useEffect(() => {
     if (theme === "dark") {
       setCircleColor("#FFFFFF");
@@ -72,7 +69,6 @@ export function TratakPractice({
     }
   }, [theme]);
 
-  // Check if audio files are available
   useEffect(() => {
     const checkAudioAvailability = async () => {
       try {
@@ -96,7 +92,6 @@ export function TratakPractice({
     checkAudioAvailability();
   }, []);
 
-  // Handle fullscreen toggle
   const toggleFullscreen = () => {
     if (!tratakContainerRef.current) return;
 
@@ -107,10 +102,8 @@ export function TratakPractice({
         } else if (
           (tratakContainerRef.current as any).webkitRequestFullscreen
         ) {
-          /* Safari */
           (tratakContainerRef.current as any).webkitRequestFullscreen();
         } else if ((tratakContainerRef.current as any).msRequestFullscreen) {
-          /* IE11 */
           (tratakContainerRef.current as any).msRequestFullscreen();
         }
       } catch (error) {
@@ -138,12 +131,10 @@ export function TratakPractice({
     }
   };
 
-  // Listen for fullscreen change events
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
 
-      // Close any open popovers when entering fullscreen mode
       const popoverTrigger = document.querySelector('[data-state="open"]');
       if (popoverTrigger && document.fullscreenElement) {
         // @ts-ignore

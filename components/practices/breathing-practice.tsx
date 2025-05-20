@@ -5,372 +5,294 @@ import { useTranslation } from "@/hooks/use-translation";
 import { motion, AnimatePresence } from "framer-motion";
 import type { BreathingPattern } from "./breathing-pattern-selector";
 
-interface BreathingPracticeProps {
+interface BreathingPracticeProperties {
   locale: string;
-  duration: number;
   isPaused?: boolean;
   pattern: BreathingPattern;
 }
 
 export function BreathingPractice({
   locale,
-  duration,
   isPaused = false,
   pattern,
-}: BreathingPracticeProps) {
-  const t = useTranslation(locale);
-  const [phase, setPhase] = useState<
-    "inhale" | "hold-in" | "exhale" | "hold-out" | "inhale-2"
+}: BreathingPracticeProperties) {
+  const translate = useTranslation(locale);
+
+  // States to control breathing phases
+  const [currentPhase, setCurrentPhase] = useState<
+    "inhale" | "inhale-2" | "hold-in" | "exhale" | "hold-out"
   >("inhale");
-  const [phaseTime, setPhaseTime] = useState(0);
+  const [elapsedTimeInPhase, setElapsedTimeInPhase] = useState(0);
   const [totalElapsedTime, setTotalElapsedTime] = useState(0);
-  const [inhaleCount, setInhaleCount] = useState(1); // For double inhale pattern
-  const animationRef = useRef<number | null>(null);
-  const lastTimestampRef = useRef<number | null>(null);
-  const phaseStartTimeRef = useRef<number | null>(null);
-  const sessionStartTimeRef = useRef<number | null>(null);
+  const [inhaleIteration, setInhaleIteration] = useState(1);
 
-  // Timing adjustment to compensate for the 1-second lag
-  const timeAdjustment = 1.0; // Subtract 1 second from displayed time
+  // Refs for animation frame control and timestamps
+  const animationFrameId = useRef<number | null>(null);
+  const phaseStartTime = useRef<number | null>(null);
+  const sessionStartTime = useRef<number | null>(null);
 
-  // Extract timing values from the pattern
+  // Extract timing durations from the breathing pattern
   const {
-    inhale: inhaleTime,
-    holdAfterInhale,
-    exhale: exhaleTime,
-    holdAfterExhale,
-    doubleInhale,
+    inhale: inhaleDuration,
+    holdAfterInhale: holdInDuration,
+    exhale: exhaleDuration,
+    holdAfterExhale: holdOutDuration,
+    doubleInhale: hasDoubleInhale = false,
   } = pattern.timing;
 
-  // Calculate total cycle time
-  const cycleTime =
-    inhaleTime +
-    holdAfterInhale +
-    exhaleTime +
-    holdAfterExhale +
-    (doubleInhale ? inhaleTime : 0);
+  // Total time of one full breathing cycle
+  const cycleDuration =
+    inhaleDuration +
+    holdInDuration +
+    exhaleDuration +
+    holdOutDuration +
+    (hasDoubleInhale ? inhaleDuration : 0);
 
-  // Reset animation when pattern changes
+  // Adjustment to compensate for display lag
+  const displayTimeAdjustment = 1;
+
+  // Reset when pattern changes
   useEffect(() => {
-    setPhase("inhale");
-    setPhaseTime(0);
+    setCurrentPhase("inhale");
+    setElapsedTimeInPhase(0);
     setTotalElapsedTime(0);
-    setInhaleCount(1);
-    phaseStartTimeRef.current = null;
-    sessionStartTimeRef.current = null;
-    lastTimestampRef.current = null;
+    setInhaleIteration(1);
+    phaseStartTime.current = null;
+    sessionStartTime.current = null;
   }, [pattern]);
 
+  // Animation loop
   useEffect(() => {
     if (isPaused) {
-      // If paused, cancel the animation frame
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-        animationRef.current = null;
+      if (animationFrameId.current !== null) {
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = null;
       }
       return;
     }
 
-    // Function to handle phase transitions with precise timing
-    const transitionToNextPhase = (
-      currentPhase: string,
-      elapsedInPhase: number
-    ) => {
-      // Determine the next phase based on the current phase
-      if (doubleInhale) {
-        if (currentPhase === "inhale" && inhaleCount === 1) {
-          if (elapsedInPhase >= inhaleTime) {
-            setPhase("inhale-2");
-            setInhaleCount(2);
-            phaseStartTimeRef.current = performance.now();
-            return true;
-          }
-        } else if (
-          currentPhase === "inhale-2" ||
-          (currentPhase === "inhale" && inhaleCount === 2)
+    function transitionToNextPhase(phaseKey: string, timeInPhase: number) {
+      if (hasDoubleInhale) {
+        if (
+          phaseKey === "inhale" &&
+          inhaleIteration === 1 &&
+          timeInPhase >= inhaleDuration
         ) {
-          if (elapsedInPhase >= inhaleTime) {
-            setPhase("exhale");
-            phaseStartTimeRef.current = performance.now();
-            return true;
-          }
-        } else if (currentPhase === "exhale") {
-          if (elapsedInPhase >= exhaleTime) {
-            if (holdAfterExhale > 0) {
-              setPhase("hold-out");
-              phaseStartTimeRef.current = performance.now();
-            } else {
-              setPhase("inhale");
-              setInhaleCount(1);
-              phaseStartTimeRef.current = performance.now();
-            }
-            return true;
-          }
-        } else if (currentPhase === "hold-out") {
-          if (elapsedInPhase >= holdAfterExhale) {
-            setPhase("inhale");
-            setInhaleCount(1);
-            phaseStartTimeRef.current = performance.now();
-            return true;
-          }
+          setCurrentPhase("inhale-2");
+          setInhaleIteration(2);
+          phaseStartTime.current = performance.now();
+          return;
         }
-      } else {
-        // Standard breathing pattern transitions
-        if (currentPhase === "inhale") {
-          if (elapsedInPhase >= inhaleTime) {
-            if (holdAfterInhale > 0) {
-              setPhase("hold-in");
-              phaseStartTimeRef.current = performance.now();
-            } else {
-              setPhase("exhale");
-              phaseStartTimeRef.current = performance.now();
-            }
-            return true;
-          }
-        } else if (currentPhase === "hold-in") {
-          if (elapsedInPhase >= holdAfterInhale) {
-            setPhase("exhale");
-            phaseStartTimeRef.current = performance.now();
-            return true;
-          }
-        } else if (currentPhase === "exhale") {
-          if (elapsedInPhase >= exhaleTime) {
-            if (holdAfterExhale > 0) {
-              setPhase("hold-out");
-              phaseStartTimeRef.current = performance.now();
-            } else {
-              setPhase("inhale");
-              phaseStartTimeRef.current = performance.now();
-            }
-            return true;
-          }
-        } else if (currentPhase === "hold-out") {
-          if (elapsedInPhase >= holdAfterExhale) {
-            setPhase("inhale");
-            phaseStartTimeRef.current = performance.now();
-            return true;
-          }
+        if (
+          (phaseKey === "inhale-2" ||
+            (phaseKey === "inhale" && inhaleIteration === 2)) &&
+          timeInPhase >= inhaleDuration
+        ) {
+          setCurrentPhase("exhale");
+          phaseStartTime.current = performance.now();
+          return;
         }
       }
-      return false;
-    };
-
-    const animate = (timestamp: number) => {
-      // Initialize session start time if not set
-      if (sessionStartTimeRef.current === null) {
-        sessionStartTimeRef.current = timestamp;
+      if (phaseKey === "inhale" && timeInPhase >= inhaleDuration) {
+        if (holdInDuration > 0) {
+          setCurrentPhase("hold-in");
+        } else {
+          setCurrentPhase("exhale");
+        }
+        phaseStartTime.current = performance.now();
+        return;
       }
-
-      // Initialize phase start time if not set
-      if (phaseStartTimeRef.current === null) {
-        phaseStartTimeRef.current = timestamp;
+      if (phaseKey === "inhale-2" && timeInPhase >= inhaleDuration) {
+        if (exhaleDuration > 0) {
+          setCurrentPhase("exhale");
+        }
+        phaseStartTime.current = performance.now();
+        return;
       }
+      if (phaseKey === "hold-in" && timeInPhase >= holdInDuration) {
+        setCurrentPhase("exhale");
+        phaseStartTime.current = performance.now();
+        return;
+      }
+      if (phaseKey === "exhale" && timeInPhase >= exhaleDuration) {
+        if (holdOutDuration > 0) {
+          setCurrentPhase("hold-out");
+        } else {
+          setCurrentPhase("inhale");
+          setInhaleIteration(1);
+        }
+        phaseStartTime.current = performance.now();
+        return;
+      }
+      if (phaseKey === "hold-out" && timeInPhase >= holdOutDuration) {
+        setCurrentPhase("inhale");
+        setInhaleIteration(1);
+        phaseStartTime.current = performance.now();
+      }
+    }
 
-      // Calculate elapsed time in the current phase
-      const elapsedInPhase = (timestamp - phaseStartTimeRef.current) / 1000;
+    function animateFrame(timestamp: number) {
+      if (sessionStartTime.current === null)
+        sessionStartTime.current = timestamp;
+      if (phaseStartTime.current === null) phaseStartTime.current = timestamp;
+      const timeInPhase = (timestamp - phaseStartTime.current) / 1000;
+      const timeSinceStart = (timestamp - sessionStartTime.current) / 1000;
 
-      // Calculate total elapsed time since session start
-      const totalElapsed = (timestamp - sessionStartTimeRef.current) / 1000;
+      setElapsedTimeInPhase(timeInPhase);
+      setTotalElapsedTime(timeSinceStart);
+      transitionToNextPhase(currentPhase, timeInPhase);
 
-      // Update phase time and total elapsed time
-      setPhaseTime(elapsedInPhase);
-      setTotalElapsedTime(totalElapsed);
+      animationFrameId.current = requestAnimationFrame(animateFrame);
+    }
 
-      // Check if we need to transition to the next phase
-      transitionToNextPhase(phase, elapsedInPhase);
-
-      // Store timestamp and request next animation frame
-      lastTimestampRef.current = timestamp;
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    // Start animation
-    animationRef.current = requestAnimationFrame(animate);
-
-    // Cleanup function
+    animationFrameId.current = requestAnimationFrame(animateFrame);
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
+      if (animationFrameId.current !== null) {
+        cancelAnimationFrame(animationFrameId.current);
       }
     };
   }, [
     isPaused,
-    inhaleTime,
-    holdAfterInhale,
-    exhaleTime,
-    holdAfterExhale,
-    cycleTime,
-    phase,
-    doubleInhale,
-    inhaleCount,
+    inhaleDuration,
+    holdInDuration,
+    exhaleDuration,
+    holdOutDuration,
+    cycleDuration,
+    currentPhase,
+    hasDoubleInhale,
+    inhaleIteration,
   ]);
 
-  const getInstructionText = () => {
-    switch (phase) {
+  // Instruction text based on phase
+  function getInstructionTitle() {
+    switch (currentPhase) {
       case "inhale":
-        return doubleInhale && inhaleCount === 1
-          ? locale === "en"
-            ? "First Inhale"
-            : "Primeira Inspiração"
-          : locale === "en"
-          ? "Inhale"
-          : "Inspire";
+        return hasDoubleInhale && inhaleIteration === 1
+          ? translate("First Inhale Partially")
+          : translate("Breathe In");
       case "inhale-2":
-        return locale === "en" ? "Second Inhale" : "Segunda Inspiração";
+        return translate("Fill Your Lungs");
       case "hold-in":
-        return locale === "en" ? "Hold" : "Segure";
+        return translate("Hold Breath");
       case "exhale":
-        return locale === "en" ? "Exhale" : "Expire";
+        return translate("Breathe Out");
       case "hold-out":
-        return locale === "en" ? "Rest" : "Descanse";
+        return translate("Rest");
     }
-  };
+  }
 
-  const getInstructionSubtext = () => {
-    switch (phase) {
+  function getInstructionSubtitle() {
+    switch (currentPhase) {
       case "inhale":
-        return doubleInhale && inhaleCount === 1
-          ? locale === "en"
-            ? "Breathe in partially"
-            : "Respire parcialmente"
-          : locale === "en"
-          ? "Breathe in slowly"
-          : "Respire lentamente";
+        return translate("Inhale slowly and deeply");
       case "inhale-2":
-        return locale === "en"
-          ? "Fill your lungs completely"
-          : "Encha completamente os pulmões";
+        return translate("Complete your inhale");
       case "hold-in":
-        return locale === "en" ? "Hold your breath" : "Segure a respiração";
+        return translate("Hold your breath");
       case "exhale":
-        return doubleInhale
-          ? locale === "en"
-            ? "Release with a sigh"
-            : "Solte com um suspiro"
-          : locale === "en"
-          ? "Breathe out slowly"
-          : "Expire lentamente";
+        return translate("Exhale gently");
       case "hold-out":
-        return locale === "en"
-          ? "Pause before next breath"
-          : "Pausa antes da próxima respiração";
+        return translate("Pause before next breath");
     }
-  };
+  }
 
-  // Get the current phase duration for the countdown display
-  const getCurrentPhaseDuration = () => {
-    switch (phase) {
+  // Remaining seconds in current phase
+  function getRemainingTime() {
+    const phaseDurations = {
+      inhale: inhaleDuration,
+      "inhale-2": inhaleDuration,
+      "hold-in": holdInDuration,
+      exhale: exhaleDuration,
+      "hold-out": holdOutDuration,
+    };
+    const remaining =
+      phaseDurations[currentPhase] - elapsedTimeInPhase - displayTimeAdjustment;
+    return Math.max(Math.ceil(remaining), 0);
+  }
+
+  // Continuous cycle progress (0–1)
+  const cycleProgress = (totalElapsedTime % cycleDuration) / cycleDuration;
+
+  // Color for the progress stroke and active dots
+  function getPhaseColor(): string {
+    switch (currentPhase) {
       case "inhale":
       case "inhale-2":
-        return inhaleTime;
+        return "rgba(0,180,180,0.8)";
       case "hold-in":
-        return holdAfterInhale;
+        return "rgba(100,200,200,0.8)";
       case "exhale":
-        return exhaleTime;
+        return "rgba(0,150,150,0.8)";
       case "hold-out":
-        return holdAfterExhale;
+        return "rgba(0,120,120,0.8)";
       default:
-        return 0;
+        return "rgba(0,180,180,0.8)";
     }
-  };
+  }
 
-  // Calculate seconds remaining in the current phase with adjustment
-  // Subtract 1 second to compensate for the lag
-  const secondsRemaining = Math.max(
-    Math.ceil(getCurrentPhaseDuration() - phaseTime - timeAdjustment),
-    0
-  );
+  // Build segments array for dot placement
+  interface PhaseSegment {
+    key: "inhale" | "inhale-2" | "hold-in" | "exhale" | "hold-out";
+    duration: number;
+    activeColor: string;
+    inactiveColor: string;
+  }
 
-  // Calculate continuous progress for the circular indicator
-  // This creates a value that continuously increases and can be used for a non-resetting animation
-  const continuousProgress = (totalElapsedTime % cycleTime) / cycleTime;
-
-  // Ripple effect for inhale phase - slower and more gentle
-  const rippleVariants = {
-    animate: {
-      opacity: [0, 0.3, 0],
-      scale: [1, 1.3, 1],
-      transition: {
-        duration: 6, // Slower animation
-        repeat: Number.POSITIVE_INFINITY,
-        ease: "easeInOut",
-        times: [0, 0.5, 1],
-      },
+  const phaseSegments: PhaseSegment[] = [
+    {
+      key: "inhale",
+      duration: inhaleDuration,
+      activeColor: "rgba(0,180,180,1)",
+      inactiveColor: "rgba(0,180,180,0.4)",
     },
-    paused: {
-      opacity: 0.2,
-      scale: 1.15,
-      transition: { duration: 0 },
-    },
-  };
-
-  // Main circle animation - slower transitions with gentler easing
-  const circleVariants = {
-    inhale: {
-      scale: 1.5,
-      backgroundColor: "rgba(0, 180, 180, 0.2)",
-      transition: { duration: inhaleTime * 1.2, ease: "easeInOut" }, // Slower animation
-    },
-    "inhale-2": {
-      scale: 1.8, // Slightly larger for the second inhale
-      backgroundColor: "rgba(0, 180, 180, 0.25)",
-      transition: { duration: inhaleTime * 1.2, ease: "easeInOut" }, // Slower animation
-    },
-    "hold-in": {
-      scale: 1.5,
-      backgroundColor: "rgba(0, 180, 180, 0.3)",
-      transition: { duration: holdAfterInhale * 1.2, ease: "easeInOut" }, // Slower animation
-    },
-    exhale: {
-      scale: doubleInhale ? 0.9 : 1, // Smaller for sighing exhale
-      backgroundColor: "rgba(0, 180, 180, 0.15)",
-      transition: { duration: exhaleTime * 1.2, ease: "easeInOut" }, // Slower animation
-    },
-    "hold-out": {
-      scale: 1,
-      backgroundColor: "rgba(0, 180, 180, 0.1)",
-      transition: { duration: holdAfterExhale * 1.2, ease: "easeInOut" }, // Slower animation
-    },
-    paused: {
-      transition: { duration: 0 },
-    },
-  };
-
-  // Get phase color based on current phase
-  const getPhaseColor = () => {
-    switch (phase) {
-      case "inhale":
-      case "inhale-2":
-        return "rgba(0, 180, 180, 0.8)";
-      case "hold-in":
-        return "rgba(100, 200, 200, 0.8)";
-      case "exhale":
-        return "rgba(0, 150, 150, 0.8)";
-      case "hold-out":
-        return "rgba(0, 120, 120, 0.8)";
-      default:
-        return "rgba(0, 180, 180, 0.8)";
-    }
-  };
+  ];
+  if (hasDoubleInhale) {
+    phaseSegments.push({
+      key: "inhale-2",
+      duration: inhaleDuration,
+      activeColor: "rgba(0,180,180,1)",
+      inactiveColor: "rgba(0,180,180,0.4)",
+    });
+  }
+  if (holdInDuration > 0) {
+    phaseSegments.push({
+      key: "hold-in",
+      duration: holdInDuration,
+      activeColor: "rgba(100,200,200,1)",
+      inactiveColor: "rgba(100,200,200,0.4)",
+    });
+  }
+  phaseSegments.push({
+    key: "exhale",
+    duration: exhaleDuration,
+    activeColor: "rgba(0,150,150,1)",
+    inactiveColor: "rgba(0,150,150,0.4)",
+  });
+  phaseSegments.push({
+    key: "hold-out",
+    duration: holdOutDuration,
+    activeColor: "rgba(0,120,120,1)",
+    inactiveColor: "rgba(0,120,120,0.4)",
+  });
 
   return (
     <div className="flex flex-col items-center justify-center py-8">
       <div className="text-3xl font-semibold mb-2 text-center">
-        {getInstructionText()}
+        {getInstructionTitle()}
       </div>
       <div className="text-lg text-muted-foreground mb-12 text-center">
-        {getInstructionSubtext()}
+        {getInstructionSubtitle()}
       </div>
 
       <div className="relative w-72 h-72 flex items-center justify-center">
         {/* Outer ripple effect */}
         <AnimatePresence>
-          {(phase === "inhale" || phase === "inhale-2") && (
+          {(currentPhase === "inhale" || currentPhase === "inhale-2") && (
             <motion.div
               className="absolute inset-0 rounded-full bg-primary/10"
               initial={{ opacity: 0, scale: 1 }}
-              variants={rippleVariants}
-              animate={isPaused ? "paused" : "animate"}
+              animate={{ opacity: 0.3, scale: 1.3 }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             />
           )}
         </AnimatePresence>
@@ -378,38 +300,56 @@ export function BreathingPractice({
         {/* Main breathing circle */}
         <motion.div
           className="w-48 h-48 rounded-full bg-primary/20 border-4 border-primary/30 flex items-center justify-center shadow-lg relative overflow-hidden"
-          animate={isPaused ? "paused" : phase}
-          variants={circleVariants}
+          animate={currentPhase}
+          variants={{
+            inhale: {
+              scale: 1.5,
+              backgroundColor: "rgba(0,180,180,0.2)",
+              transition: { duration: inhaleDuration * 1.2, ease: "easeInOut" },
+            },
+            "inhale-2": {
+              scale: 1.8,
+              backgroundColor: "rgba(0,180,180,0.25)",
+              transition: { duration: inhaleDuration * 1.2, ease: "easeInOut" },
+            },
+            "hold-in": {
+              scale: 1.5,
+              backgroundColor: "rgba(0,180,180,0.3)",
+              transition: { duration: holdInDuration * 1.2, ease: "easeInOut" },
+            },
+            exhale: {
+              scale: hasDoubleInhale ? 0.9 : 1,
+              backgroundColor: "rgba(0,180,180,0.15)",
+              transition: { duration: exhaleDuration * 1.2, ease: "easeInOut" },
+            },
+            "hold-out": {
+              scale: 1,
+              backgroundColor: "rgba(0,180,180,0.1)",
+              transition: {
+                duration: holdOutDuration * 1.2,
+                ease: "easeInOut",
+              },
+            },
+          }}
         >
-          {/* Inner gradient effect */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent" />
-
-          {/* Phase indicator */}
           <div className="relative z-10 text-lg font-medium text-primary-foreground px-4 py-2 rounded-full bg-primary/40 backdrop-blur-sm">
-            {phase === "inhale" && (locale === "en" ? "Breathe In" : "Inspire")}
-            {phase === "inhale-2" &&
-              (locale === "en" ? "Breathe In More" : "Inspire Mais")}
-            {phase === "hold-in" && (locale === "en" ? "Hold" : "Segure")}
-            {phase === "exhale" && (locale === "en" ? "Breathe Out" : "Expire")}
-            {phase === "hold-out" && (locale === "en" ? "Rest" : "Descanse")}
+            {getInstructionTitle()}
           </div>
         </motion.div>
 
-        {/* Continuous progress indicator */}
+        {/* Continuous progress line enveloping the circle */}
         <div className="absolute inset-0 w-full h-full">
-          {/* Background circle */}
           <svg className="w-full h-full" viewBox="0 0 100 100">
             <circle
               cx="50"
               cy="50"
               r="48"
               fill="none"
-              stroke="rgba(0, 180, 180, 0.1)"
+              stroke="rgba(0,180,180,0.1)"
               strokeWidth="2"
             />
           </svg>
-
-          {/* Continuous progress circle - never resets */}
           <svg
             className="absolute inset-0 w-full h-full rotate-90"
             viewBox="0 0 100 100"
@@ -422,106 +362,16 @@ export function BreathingPractice({
               stroke={getPhaseColor()}
               strokeWidth="4"
               strokeDasharray="301.59"
-              strokeDashoffset={301.59 * (1 - continuousProgress)}
+              strokeDashoffset={301.59 * (1 - cycleProgress)}
               strokeLinecap="round"
               transition={{ duration: isPaused ? 0 : 0.1, ease: "linear" }}
             />
           </svg>
-
-          {/* Phase indicator dots */}
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-            {/* Calculate positions for phase indicator dots */}
-            {(() => {
-              const dots = [];
-              let currentAngle = 0;
-
-              // Inhale phase dot
-              dots.push(
-                <circle
-                  key="inhale-dot"
-                  cx={50 + 48 * Math.cos((currentAngle - 90) * (Math.PI / 180))}
-                  cy={50 + 48 * Math.sin((currentAngle - 90) * (Math.PI / 180))}
-                  r="2"
-                  fill={
-                    phase === "inhale"
-                      ? "rgba(0, 180, 180, 1)"
-                      : "rgba(0, 180, 180, 0.4)"
-                  }
-                />
-              );
-
-              currentAngle += (inhaleTime / cycleTime) * 360;
-
-              // Hold after inhale dot (if applicable)
-              if (holdAfterInhale > 0) {
-                dots.push(
-                  <circle
-                    key="hold-in-dot"
-                    cx={
-                      50 + 48 * Math.cos((currentAngle - 90) * (Math.PI / 180))
-                    }
-                    cy={
-                      50 + 48 * Math.sin((currentAngle - 90) * (Math.PI / 180))
-                    }
-                    r="2"
-                    fill={
-                      phase === "hold-in"
-                        ? "rgba(100, 200, 200, 1)"
-                        : "rgba(100, 200, 200, 0.4)"
-                    }
-                  />
-                );
-
-                currentAngle += (holdAfterInhale / cycleTime) * 360;
-              }
-
-              // Exhale phase dot
-              dots.push(
-                <circle
-                  key="exhale-dot"
-                  cx={50 + 48 * Math.cos((currentAngle - 90) * (Math.PI / 180))}
-                  cy={50 + 48 * Math.sin((currentAngle - 90) * (Math.PI / 180))}
-                  r="2"
-                  fill={
-                    phase === "exhale"
-                      ? "rgba(0, 150, 150, 1)"
-                      : "rgba(0, 150, 150, 0.4)"
-                  }
-                />
-              );
-
-              currentAngle += (exhaleTime / cycleTime) * 360;
-
-              // Hold after exhale dot (if applicable)
-              if (holdAfterExhale > 0) {
-                dots.push(
-                  <circle
-                    key="hold-out-dot"
-                    cx={
-                      50 + 48 * Math.cos((currentAngle - 90) * (Math.PI / 180))
-                    }
-                    cy={
-                      50 + 48 * Math.sin((currentAngle - 90) * (Math.PI / 180))
-                    }
-                    r="2"
-                    fill={
-                      phase === "hold-out"
-                        ? "rgba(0, 120, 120, 1)"
-                        : "rgba(0, 120, 120, 0.4)"
-                    }
-                  />
-                );
-              }
-
-              return dots;
-            })()}
-          </svg>
         </div>
       </div>
 
-      {/* Phase timer */}
       <div className="mt-8 text-sm text-muted-foreground">
-        {secondsRemaining}s
+        {getRemainingTime()}s
       </div>
     </div>
   );

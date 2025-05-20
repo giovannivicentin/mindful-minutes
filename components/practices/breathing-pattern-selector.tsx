@@ -8,6 +8,7 @@ export type BreathingPattern = {
   id: string;
   title: string;
   purpose: string;
+
   timing: {
     inhale: number;
     holdAfterInhale: number;
@@ -35,45 +36,25 @@ export function BreathingPatternSelector({
       id: "balanced",
       title: t("practices.breathing.patterns.balanced.title"),
       purpose: t("practices.breathing.patterns.balanced.purpose"),
-      timing: {
-        inhale: 5,
-        holdAfterInhale: 3,
-        exhale: 7,
-        holdAfterExhale: 0,
-      },
+      timing: { inhale: 5, holdAfterInhale: 3, exhale: 7, holdAfterExhale: 0 },
     },
     {
       id: "box",
       title: t("practices.breathing.patterns.box.title"),
       purpose: t("practices.breathing.patterns.box.purpose"),
-      timing: {
-        inhale: 4,
-        holdAfterInhale: 4,
-        exhale: 4,
-        holdAfterExhale: 4,
-      },
+      timing: { inhale: 4, holdAfterInhale: 4, exhale: 4, holdAfterExhale: 4 },
     },
     {
       id: "relaxing",
       title: t("practices.breathing.patterns.relaxing.title"),
       purpose: t("practices.breathing.patterns.relaxing.purpose"),
-      timing: {
-        inhale: 4,
-        holdAfterInhale: 7,
-        exhale: 8,
-        holdAfterExhale: 0,
-      },
+      timing: { inhale: 4, holdAfterInhale: 7, exhale: 8, holdAfterExhale: 0 },
     },
     {
       id: "balanced-simple",
       title: t("practices.breathing.patterns.balanced-simple.title"),
       purpose: t("practices.breathing.patterns.balanced-simple.purpose"),
-      timing: {
-        inhale: 5,
-        holdAfterInhale: 0,
-        exhale: 5,
-        holdAfterExhale: 0,
-      },
+      timing: { inhale: 5, holdAfterInhale: 0, exhale: 5, holdAfterExhale: 0 },
     },
     {
       id: "sighing",

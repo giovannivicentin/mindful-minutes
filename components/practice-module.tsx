@@ -138,7 +138,6 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
         return (
           <BreathingPractice
             locale={locale}
-            duration={selectedDuration}
             isPaused={isPaused}
             pattern={getSelectedBreathingPattern()}
           />

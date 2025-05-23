@@ -6,7 +6,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
-import { TreesIcon as Lungs, Brain, Eye, Activity } from "lucide-react";
+import { TreesIcon as Lungs, Brain, Eye, Activity, Leaf } from "lucide-react";
 
 interface PracticeCard {
   id: string;
@@ -164,14 +164,20 @@ export function PracticeGrid({ locale }: { locale: string }) {
 
   return (
     <div className="w-full">
-      {/* Header */}
       <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60">
-          {t("practices.title")}
-        </h2>
-        <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
-          {t("practices.description")}
-        </p>
+        <div className="flex flex-col items-center justify-center mb-6">
+          <div className="inline-block p-2 bg-primary/10 rounded-full mb-4">
+            <div className="p-4 bg-primary/20 rounded-full">
+              <Leaf className="h-10 w-10 text-primary" />
+            </div>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60">
+            {t("practices.title")}
+          </h2>
+          <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
+            {t("practices.description")}
+          </p>
+        </div>
       </div>
 
       {/* Practice Cards Grid - Optimized for 4 items */}

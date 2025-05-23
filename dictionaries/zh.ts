@@ -89,14 +89,6 @@ export const zh = {
       title: "认知重构日志",
       description: "识别并挑战消极思维模式。",
     },
-    "hrv-biofeedback": {
-      title: "轻度心率变异性生物反馈",
-      description: "使用设备摄像头进行心率变异性训练。",
-    },
-    combo: {
-      title: "今日组合",
-      description: "为您选择的时长定制的练习序列。",
-    },
   },
   timer: {
     select: "选择时长",

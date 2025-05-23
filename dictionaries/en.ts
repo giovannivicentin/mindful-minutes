@@ -130,15 +130,6 @@ export const en = {
       title: "Cognitive Restructuring Journal",
       description: "Identify and challenge negative thought patterns.",
     },
-    "hrv-biofeedback": {
-      title: "Light HRV Biofeedback",
-      description:
-        "Heart rate variability training using your device's camera.",
-    },
-    combo: {
-      title: "Combo of the Day",
-      description: "Curated sequence of practices for your chosen duration.",
-    },
   },
   timer: {
     select: "Select Duration",

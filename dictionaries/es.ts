@@ -102,16 +102,6 @@ export const es = {
       title: "Diario de Reestructuración Cognitiva",
       description: "Identifica y desafía patrones de pensamiento negativos.",
     },
-    "hrv-biofeedback": {
-      title: "Biofeedback de VFC Ligero",
-      description:
-        "Entrenamiento de variabilidad de la frecuencia cardíaca usando la cámara de tu dispositivo.",
-    },
-    combo: {
-      title: "Combo del Día",
-      description:
-        "Secuencia seleccionada de prácticas para la duración elegida.",
-    },
   },
   timer: {
     select: "Seleccionar duración",

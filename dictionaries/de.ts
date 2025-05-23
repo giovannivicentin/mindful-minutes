@@ -103,15 +103,6 @@ export const de = {
       title: "Tagebuch zur kognitiven Umstrukturierung",
       description: "Identifiziere und hinterfrage negative Denkmuster.",
     },
-    "hrv-biofeedback": {
-      title: "Leichtes HRV-Biofeedback",
-      description:
-        "Training der Herzfrequenzvariabilität mit der Kamera deines Geräts.",
-    },
-    combo: {
-      title: "Tages-Kombo",
-      description: "Kuratiertes Übungsprogramm für deine gewählte Dauer.",
-    },
   },
   timer: {
     select: "Dauer auswählen",

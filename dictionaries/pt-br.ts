@@ -103,16 +103,6 @@ export const ptBR = {
       title: "Jornal de Reestruturação Cognitiva",
       description: "Identifique e desafie padrões de pensamento negativos.",
     },
-    "hrv-biofeedback": {
-      title: "Biofeedback de VFC Leve",
-      description:
-        "Treinamento de variabilidade da frequência cardíaca usando a câmera do dispositivo.",
-    },
-    combo: {
-      title: "Combo do Dia",
-      description:
-        "Sequência selecionada de práticas para a duração escolhida.",
-    },
   },
   timer: {
     select: "Selecionar Duração",

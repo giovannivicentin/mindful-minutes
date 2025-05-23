@@ -103,15 +103,6 @@ export const fr = {
       title: "Journal de restructuration cognitive",
       description: "Identifiez et défiez les schémas de pensée négatifs.",
     },
-    "hrv-biofeedback": {
-      title: "Biofeedback VFC léger",
-      description:
-        "Entraînement à la variabilité de la fréquence cardiaque utilisant l'appareil photo de votre appareil.",
-    },
-    combo: {
-      title: "Combo du jour",
-      description: "Séquence de pratiques sélectionnée pour la durée choisie.",
-    },
   },
   timer: {
     select: "Choisir la durée",

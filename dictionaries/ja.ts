@@ -98,14 +98,6 @@ export const ja = {
       title: "認知再構成ジャーナル",
       description: "ネガティブな思考パターンを特定し、挑戦します。",
     },
-    "hrv-biofeedback": {
-      title: "軽度HRVバイオフィードバック",
-      description: "デバイスのカメラを使った心拍変動トレーニング。",
-    },
-    combo: {
-      title: "今日のコンボ",
-      description: "選択した時間に合わせたプラクティスのシークエンス。",
-    },
   },
   timer: {
     select: "時間を選択",

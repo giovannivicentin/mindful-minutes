@@ -11,7 +11,6 @@ export default function PracticePage({
   const validPractices = [
     "breathing",
     "meditation",
-    "visualization",
     "tratak",
     "muscle-relaxation",
   ];

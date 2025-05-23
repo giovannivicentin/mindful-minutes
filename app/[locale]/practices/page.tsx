@@ -9,9 +9,7 @@ export default function PracticesPage({
   const t = useTranslation(params.locale);
 
   return (
-    <div className="container py-8">
-      <h1 className="text-3xl font-bold mb-6">{t("practices.title")}</h1>
-      <p className="text-muted-foreground mb-8">{t("practices.description")}</p>
+    <div className="container py-20">
       <PracticeGrid locale={params.locale} />
     </div>
   );

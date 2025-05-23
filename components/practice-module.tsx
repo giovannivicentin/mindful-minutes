@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { TimerSelector } from "@/components/timer-selector";
 import { TimerProgress } from "@/components/timer-progress";
 import { useTranslation } from "@/hooks/use-translation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Leaf } from "lucide-react";
 import { BreathingPractice } from "@/components/practices/breathing-practice";
 import { MeditationPractice } from "@/components/practices/meditation-practice";
 import { TratakPractice } from "@/components/practices/tratak-practice";
@@ -170,18 +170,32 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <Button
-        variant="ghost"
-        className="mb-4 flex items-center gap-2"
-        onClick={handleBack}
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {t("common.back")}
-      </Button>
+      <div className="flex items-center justify-between mb-4">
+        <Button
+          variant="ghost"
+          className="flex items-center gap-2"
+          onClick={handleBack}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t("common.back")}
+        </Button>
+
+        <div className="flex items-center gap-2">
+          <div className="p-1.5 bg-primary/10 rounded-full">
+            <Leaf className="h-4 w-4 text-primary" />
+          </div>
+          <span className="font-medium text-sm text-muted-foreground">
+            Mindful Minutes
+          </span>
+        </div>
+      </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>{getPracticeTitle()}</CardTitle>
+        <CardHeader className="flex flex-col items-center">
+          <div className="p-2 bg-primary/10 rounded-full mb-2">
+            <Leaf className="h-5 w-5 text-primary" />
+          </div>
+          <CardTitle className="text-2xl">{getPracticeTitle()}</CardTitle>
         </CardHeader>
         <CardContent>
           {!isActive ? (

@@ -14,9 +14,6 @@ export default function PracticePage({
     "visualization",
     "tratak",
     "muscle-relaxation",
-    "cognitive-restructuring",
-    "hrv-biofeedback",
-    "combo",
   ];
 
   if (!validPractices.includes(params.practice)) {

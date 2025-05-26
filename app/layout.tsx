@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/components/i18n-provider";
 import Navigation from "@/components/navigation";
 import { dictionaries } from "@/dictionaries";
+import { Footer } from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -60,6 +61,7 @@ export default function RootLayout({
               <Navigation />
               <main className="flex-1">{children}</main>
             </div>
+            <Footer />
           </ThemeProvider>
         </I18nProvider>
       </body>

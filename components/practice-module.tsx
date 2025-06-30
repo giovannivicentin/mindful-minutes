@@ -7,15 +7,17 @@ import { Button } from "@/components/ui/button";
 import { TimerSelector } from "@/components/timer-selector";
 import { TimerProgress } from "@/components/timer-progress";
 import { useTranslation } from "@/hooks/use-translation";
-import { ArrowLeft, Leaf } from "lucide-react";
+import { Leaf, Settings, Play } from "lucide-react";
 import { BreathingPractice } from "@/components/practices/breathing-practice";
 import { MeditationPractice } from "@/components/practices/meditation-practice";
 import { TratakPractice } from "@/components/practices/tratak-practice";
+import { MuscleRelaxationPractice } from "@/components/practices/muscle-relaxation-practice";
 import {
   BreathingPatternSelector,
   type BreathingPattern,
 } from "@/components/practices/breathing-pattern-selector";
 import { useStore } from "@/lib/store";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface PracticeModuleProps {
   practice: string;
@@ -154,7 +156,14 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
             isPaused={isPaused}
           />
         );
-      // Other practice components will be added here
+      case "muscle-relaxation":
+        return (
+          <MuscleRelaxationPractice
+            locale={locale}
+            duration={selectedDuration}
+            isPaused={isPaused}
+          />
+        );
       default:
         return (
           <div className="flex items-center justify-center p-8 text-center">
@@ -169,76 +178,127 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <Button
-          variant="ghost"
-          className="flex items-center gap-2"
-          onClick={handleBack}
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {t("common.back")}
-        </Button>
-
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-primary/10 rounded-full">
-            <Leaf className="h-4 w-4 text-primary" />
-          </div>
-          <span className="font-medium text-sm text-muted-foreground">
-            Mindful Minutes
-          </span>
-        </div>
-      </div>
-
-      <Card>
-        <CardHeader className="flex flex-col items-center">
-          <div className="p-2 bg-primary/10 rounded-full mb-2">
-            <Leaf className="h-5 w-5 text-primary" />
-          </div>
-          <CardTitle className="text-2xl">{getPracticeTitle()}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!isActive ? (
-            <div className="space-y-6">
-              <TimerSelector locale={locale} onSelect={handleTimerSelect} />
-
-              {practice === "breathing" && selectedDuration && (
-                <BreathingPatternSelector
-                  locale={locale}
-                  selectedPattern={selectedBreathingPattern}
-                  onPatternChange={setSelectedBreathingPattern}
-                />
-              )}
-
-              {selectedDuration && (
-                <Button className="w-full" onClick={handleStart}>
-                  {t("timer.start")}
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-8">
-              <div className="flex justify-between items-center">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleBackToSelection}
-                  className="flex items-center gap-1"
-                >
-                  <ArrowLeft className="h-3 w-3" />
-                  {t("common.changeSettings")}
-                </Button>
-
-                <div className="text-sm text-muted-foreground">
-                  {selectedDuration} {t("timer.minutes")}
+    <div className="w-full">
+      <AnimatePresence mode="wait">
+        {!isActive ? (
+          <motion.div
+            key="setup"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Card className="border-none shadow-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm">
+              <CardHeader className="text-center pb-8">
+                <div className="flex justify-center mb-4">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 20,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "linear",
+                    }}
+                    className="p-3 bg-gradient-to-br from-primary/20 to-primary/40 rounded-full"
+                  >
+                    <Leaf className="h-6 w-6 text-primary" />
+                  </motion.div>
                 </div>
+                <CardTitle className="text-2xl md:text-3xl font-light bg-gradient-to-r from-slate-900 via-primary to-slate-900 dark:from-slate-100 dark:via-primary dark:to-slate-100 bg-clip-text text-transparent">
+                  {getPracticeTitle()}
+                </CardTitle>
+                <p className="text-slate-600 dark:text-slate-400 mt-2">
+                  {locale === "en"
+                    ? "Customize your practice session"
+                    : "Personalize sua sessão de prática"}
+                </p>
+              </CardHeader>
+
+              <CardContent className="space-y-8">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  <TimerSelector locale={locale} onSelect={handleTimerSelect} />
+                </motion.div>
+
+                {practice === "breathing" && selectedDuration && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                  >
+                    <BreathingPatternSelector
+                      locale={locale}
+                      selectedPattern={selectedBreathingPattern}
+                      onPatternChange={setSelectedBreathingPattern}
+                    />
+                  </motion.div>
+                )}
+
+                {selectedDuration && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.6 }}
+                    className="pt-4"
+                  >
+                    <Button
+                      className="w-full py-4 text-lg font-medium bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl group"
+                      onClick={handleStart}
+                    >
+                      <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform duration-300" />
+                      {t("timer.start")}
+                    </Button>
+                  </motion.div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="practice"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-8"
+          >
+            {/* Practice Header */}
+            <div className="flex justify-between items-center p-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBackToSelection}
+                className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-300 group"
+              >
+                <Settings className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+                <span className="text-sm font-medium">
+                  {t("common.changeSettings")}
+                </span>
+              </Button>
+
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-white/20">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  {selectedDuration} {t("timer.minutes")}
+                </span>
               </div>
+            </div>
 
-              {/* Render the breathing animation first */}
+            {/* Practice Component */}
+            <div className="bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
               {renderPracticeComponent()}
+            </div>
 
-              {/* Timer controls below the animation */}
-              <div className="mt-8 pt-4 border-t">
+            {/* Timer controls below the practice (except for muscle relaxation which has its own timer) */}
+            {practice !== "muscle-relaxation" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg"
+              >
                 <TimerProgress
                   durationMinutes={selectedDuration || 7}
                   locale={locale}
@@ -246,11 +306,11 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
                   autoStart={true}
                   onActiveChange={handleTimerActiveChange}
                 />
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

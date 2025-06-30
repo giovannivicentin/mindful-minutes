@@ -164,22 +164,6 @@ export function PracticeGrid({ locale }: { locale: string }) {
 
   return (
     <div className="w-full">
-      <div className="text-center mb-16">
-        <div className="flex flex-col items-center justify-center mb-6">
-          <div className="inline-block p-2 bg-primary/10 rounded-full mb-4">
-            <div className="p-4 bg-primary/20 rounded-full">
-              <Leaf className="h-10 w-10 text-primary" />
-            </div>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60">
-            {t("practices.title")}
-          </h2>
-          <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
-            {t("practices.description")}
-          </p>
-        </div>
-      </div>
-
       {/* Practice Cards Grid - Optimized for 4 items */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 max-w-8xl mx-auto">
         {practices.map((practice, index) => (
@@ -192,29 +176,6 @@ export function PracticeGrid({ locale }: { locale: string }) {
             locale={locale}
           />
         ))}
-      </div>
-
-      {/* Enhanced Call to Action */}
-      <div className="text-center mt-20">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <p className="text-muted-foreground text-lg leading-relaxed">
-            {locale === "en"
-              ? "Each practice is designed to help you find calm, reduce stress, and improve your mental well-being in just minutes."
-              : "Cada prática é projetada para ajudá-lo a encontrar calma, reduzir o estresse e melhorar seu bem-estar mental em apenas alguns minutos."}
-          </p>
-          <div className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20">
-            <div className="flex gap-1">
-              <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
-              <span className="w-2 h-2 bg-primary/70 rounded-full animate-pulse delay-100"></span>
-              <span className="w-2 h-2 bg-primary/50 rounded-full animate-pulse delay-200"></span>
-            </div>
-            <span className="text-primary font-semibold text-lg">
-              {locale === "en"
-                ? "Choose your practice to begin"
-                : "Escolha sua prática para começar"}
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   );

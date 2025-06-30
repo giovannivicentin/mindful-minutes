@@ -11,6 +11,10 @@ export const en = {
         "Quick sessions to lower anxiety, stress, and prevent burnout in 21 minutes or less.",
       startButton: "Start Now",
       exploreButton: "Explore Practices",
+      badge: "Mindfulness Made Simple",
+      popularPractices: "Popular Practices",
+      startJourney: "Start Your Journey",
+      sessionDuration: "Sessions from 7-21 minutes",
     },
     featured: {
       title: "Featured Practices",
@@ -124,11 +128,104 @@ export const en = {
     },
     "muscle-relaxation": {
       title: "Progressive Muscle Relaxation",
-      description: "Audio-guided tension and release of muscle groups.",
-    },
-    "cognitive-restructuring": {
-      title: "Cognitive Restructuring Journal",
-      description: "Identify and challenge negative thought patterns.",
+      description:
+        "Systematic tension and release of muscle groups with visual guidance.",
+      introduction: {
+        title: "Preparation",
+        instruction:
+          "Find a comfortable position, either sitting or lying down. Close your eyes and take three deep breaths. We will systematically tense and relax different muscle groups throughout your body.",
+      },
+      segments: {
+        toes: {
+          title: "Toes",
+          instruction:
+            "Focus on your toes. Curl them tightly downward, creating tension. Hold for 5 seconds... Now release and let them relax completely. Notice the difference between tension and relaxation.",
+        },
+        feet: {
+          title: "Feet",
+          instruction:
+            "Now focus on your entire feet. Flex your feet upward toward your shins, creating tension in your arches and the tops of your feet. Hold for 5 seconds... Now release and let your feet become completely loose.",
+        },
+        calves: {
+          title: "Calves & Lower Legs",
+          instruction:
+            "Point your toes away from you, creating tension in your calf muscles and lower legs. Feel the tightness building. Hold for 5 seconds... Now release and feel the warmth spreading through your lower legs.",
+        },
+        thighs: {
+          title: "Thighs",
+          instruction:
+            "Tighten your thigh muscles by pressing your knees together and straightening your legs. Feel the tension in your quadriceps and hamstrings. Hold for 5 seconds... Now release and feel your thighs become heavy and relaxed.",
+        },
+        buttocks: {
+          title: "Buttocks",
+          instruction:
+            "Squeeze your buttocks muscles tightly together. Feel the tension building in your glutes. Hold for 5 seconds... Now release completely and feel the relaxation spreading through your lower body.",
+        },
+        stomach: {
+          title: "Stomach & Back",
+          instruction:
+            "Tighten your abdominal muscles as if preparing for impact, and arch your back slightly. Feel the tension in your core and back muscles. Hold for 5 seconds... Now release and let your torso become soft and relaxed.",
+        },
+        hands: {
+          title: "Hands",
+          instruction:
+            "Make tight fists with both hands, squeezing your fingers into your palms. Feel the tension in your hands and fingers. Hold for 5 seconds... Now release and let your hands open naturally, feeling the relaxation.",
+        },
+        forearms: {
+          title: "Forearms",
+          instruction:
+            "Extend your arms and bend your wrists upward, pointing your fingers toward the ceiling. Feel the tension in your forearms. Hold for 5 seconds... Now release and let your arms rest comfortably.",
+        },
+        biceps: {
+          title: "Biceps & Triceps",
+          instruction:
+            "Bend your arms and flex your biceps, making your arms as strong as possible. Feel the tension in both your biceps and triceps. Hold for 5 seconds... Now release and let your arms fall naturally to your sides.",
+        },
+        shoulders: {
+          title: "Shoulders, Chest & Upper Back",
+          instruction:
+            "Raise your shoulders up toward your ears and squeeze your shoulder blades together, expanding your chest. Feel the tension across your upper body. Hold for 5 seconds... Now release and let your shoulders drop completely.",
+        },
+        neck: {
+          title: "Neck",
+          instruction:
+            "Gently tilt your head back and tense the muscles in your neck. Be careful not to strain. Hold for 5 seconds... Now release and let your head return to a comfortable position, feeling the tension melt away.",
+        },
+        face: {
+          title: "Facial Muscles",
+          instruction:
+            "Scrunch up your entire face. Close your eyes tightly, wrinkle your forehead, clench your jaw, and purse your lips. Hold for 5 seconds... Now release everything and let your face become completely smooth and peaceful.",
+        },
+        scalp: {
+          title: "Scalp",
+          instruction:
+            "Raise your eyebrows and wrinkle your forehead, creating tension in your scalp muscles. Hold for 5 seconds... Now release and feel the tension dissolving from the top of your head.",
+        },
+        fullbody: {
+          title: "Full Body Relaxation",
+          instruction:
+            "Take a moment to scan your entire body from head to toe. Notice how relaxed and peaceful you feel. Take three deep breaths and enjoy this state of complete relaxation. When you're ready, slowly open your eyes.",
+        },
+      },
+      controls: {
+        start: "Start Practice",
+        pause: "Pause",
+        resume: "Resume",
+        next: "Next",
+        previous: "Previous",
+        complete: "Practice Complete",
+        segment: "Segment",
+        of: "of",
+        timeRemaining: "Time Remaining",
+        currentPhase: "Current Phase",
+      },
+      phases: {
+        preparation: "Preparation",
+        tension: "Create Tension",
+        hold: "Hold Tension",
+        release: "Release & Relax",
+        rest: "Rest & Notice",
+      },
     },
   },
   timer: {

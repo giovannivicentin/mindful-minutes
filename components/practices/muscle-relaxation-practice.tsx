@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useStore } from "@/lib/store";
 
 interface MuscleRelaxationPracticeProps {
   locale: string;
@@ -42,6 +43,7 @@ export function MuscleRelaxationPractice({
   isPaused = false,
 }: MuscleRelaxationPracticeProps) {
   const t = useTranslation(locale);
+  const { addSession } = useStore();
 
   // State management
   const [isPlaying, setIsPlaying] = useState(false);
@@ -52,6 +54,7 @@ export function MuscleRelaxationPractice({
   const [totalProgress, setTotalProgress] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(duration * 60);
   const [showTransition, setShowTransition] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
 
   // Audio state management
   const [isAudioMuted, setIsAudioMuted] = useState(false);
@@ -373,6 +376,13 @@ export function MuscleRelaxationPractice({
             } else {
               // Practice complete
               setIsPlaying(false);
+              setIsComplete(true);
+              // Record session completion
+              addSession({
+                practice: "muscle-relaxation",
+                duration: duration,
+                date: new Date().toISOString(),
+              });
               if (audioRef.current) {
                 audioRef.current.pause();
               }
@@ -392,7 +402,15 @@ export function MuscleRelaxationPractice({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isPlaying, isPaused, currentSegment, currentPhase, segments, duration]);
+  }, [
+    isPlaying,
+    isPaused,
+    currentSegment,
+    currentPhase,
+    segments,
+    duration,
+    addSession,
+  ]);
 
   // Show transition animation
   const showSegmentTransition = () => {
@@ -426,6 +444,7 @@ export function MuscleRelaxationPractice({
     setPhaseProgress(0);
     setTotalProgress(0);
     setTimeRemaining(duration * 60);
+    setIsComplete(false);
     phaseStartTimeRef.current = null;
     segmentStartTimeRef.current = null;
     if (audioRef.current) {
@@ -511,6 +530,20 @@ export function MuscleRelaxationPractice({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Timer Display */}
+        <div className="text-center">
+          <div className="text-3xl font-bold mb-2">
+            {formatTime(timeRemaining)}
+          </div>
+          <div className="text-sm text-muted-foreground">
+            {isComplete
+              ? t("timer.complete")
+              : `${Math.ceil(timeRemaining / 60)} ${t("timer.minutes")} ${t(
+                  "timer.remaining"
+                )}`}
+          </div>
+        </div>
 
         {/* Transition Animation */}
         <AnimatePresence>
@@ -808,7 +841,7 @@ export function MuscleRelaxationPractice({
         </motion.div>
 
         {/* Completion State */}
-        {!isPlaying && totalProgress >= 100 && (
+        {isComplete && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}

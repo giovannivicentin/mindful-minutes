@@ -19,9 +19,13 @@ import {
   VolumeX,
   Maximize,
   Minimize,
+  Play,
+  Pause,
+  RotateCcw,
 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { useTheme } from "next-themes";
+import { useStore } from "@/lib/store";
 
 interface TratakPracticeProps {
   locale: string;
@@ -35,14 +39,21 @@ export function TratakPractice({
   isPaused = false,
 }: TratakPracticeProps) {
   const t = useTranslation(locale);
+  const { addSession } = useStore();
+  // Get the current theme
   const { theme } = useTheme();
   const [showControls, setShowControls] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [audioAvailable, setAudioAvailable] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(duration * 60);
+  const [isComplete, setIsComplete] = useState(false);
   const tratakContainerRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Customization states with theme-aware defaults
   const [circleSize, setCircleSize] = useState(200);
   const [circleColor, setCircleColor] = useState(
     theme === "dark" ? "#FFFFFF" : "#000000"
@@ -57,6 +68,7 @@ export function TratakPractice({
   const [showPulsation, setShowPulsation] = useState(false);
   const [brightness, setBrightness] = useState(100);
 
+  // Update colors when theme changes
   useEffect(() => {
     if (theme === "dark") {
       setCircleColor("#FFFFFF");
@@ -69,6 +81,42 @@ export function TratakPractice({
     }
   }, [theme]);
 
+  // Timer logic
+  useEffect(() => {
+    if (isPlaying && timeRemaining > 0) {
+      intervalRef.current = setInterval(() => {
+        setTimeRemaining((prev) => {
+          if (prev <= 1) {
+            setIsPlaying(false);
+            setIsComplete(true);
+            // Record session completion
+            addSession({
+              practice: "tratak",
+              duration: duration,
+              date: new Date().toISOString(),
+            });
+            if (audioRef.current) {
+              audioRef.current.pause();
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isPlaying, timeRemaining, duration, addSession]);
+
+  // Check if audio files are available
   useEffect(() => {
     const checkAudioAvailability = async () => {
       try {
@@ -92,6 +140,7 @@ export function TratakPractice({
     checkAudioAvailability();
   }, []);
 
+  // Handle fullscreen toggle
   const toggleFullscreen = () => {
     if (!tratakContainerRef.current) return;
 
@@ -102,8 +151,10 @@ export function TratakPractice({
         } else if (
           (tratakContainerRef.current as any).webkitRequestFullscreen
         ) {
+          /* Safari */
           (tratakContainerRef.current as any).webkitRequestFullscreen();
         } else if ((tratakContainerRef.current as any).msRequestFullscreen) {
+          /* IE11 */
           (tratakContainerRef.current as any).msRequestFullscreen();
         }
       } catch (error) {
@@ -131,10 +182,12 @@ export function TratakPractice({
     }
   };
 
+  // Listen for fullscreen change events
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
 
+      // Close any open popovers when entering fullscreen mode
       const popoverTrigger = document.querySelector('[data-state="open"]');
       if (popoverTrigger && document.fullscreenElement) {
         // @ts-ignore
@@ -166,7 +219,7 @@ export function TratakPractice({
 
   // Audio cue for beginning and end of session
   useEffect(() => {
-    if (!isPaused && !isMuted && audioAvailable) {
+    if (isPlaying && !isMuted && audioAvailable) {
       // Play start sound when session begins
       const playStartSound = async () => {
         try {
@@ -180,27 +233,8 @@ export function TratakPractice({
       };
 
       playStartSound();
-
-      // Set up end sound
-      if (duration) {
-        const endTimer = setTimeout(() => {
-          const playEndSound = async () => {
-            try {
-              const endSound = new Audio("/audio/meditation-bell.mp3");
-              endSound.volume = 0.5;
-              await endSound.play();
-            } catch (error) {
-              console.warn("End sound playback failed:", error);
-            }
-          };
-
-          playEndSound();
-        }, duration * 60 * 1000 - 1000); // Play 1 second before end
-
-        return () => clearTimeout(endTimer);
-      }
     }
-  }, [isPaused, isMuted, duration, audioAvailable]);
+  }, [isPlaying, isMuted, audioAvailable]);
 
   // Handle ambient sound
   useEffect(() => {
@@ -214,7 +248,7 @@ export function TratakPractice({
           audioRef.current.volume = 0.2;
         }
 
-        if (!isPaused && !isMuted) {
+        if (isPlaying && !isMuted) {
           try {
             await audioRef.current.play();
           } catch (error) {
@@ -238,7 +272,21 @@ export function TratakPractice({
         audioRef.current = null;
       }
     };
-  }, [isPaused, isMuted, audioAvailable]);
+  }, [isPlaying, isMuted, audioAvailable]);
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const resetPractice = () => {
+    setIsPlaying(false);
+    setIsComplete(false);
+    setTimeRemaining(duration * 60);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
@@ -246,6 +294,12 @@ export function TratakPractice({
 
   const toggleControls = () => {
     setShowControls(!showControls);
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   // Calculate responsive sizes
@@ -262,6 +316,20 @@ export function TratakPractice({
 
   return (
     <div className="flex flex-col items-center justify-center w-full space-y-8">
+      {/* Timer Display */}
+      <div className="text-center">
+        <div className="text-3xl font-bold mb-2">
+          {formatTime(timeRemaining)}
+        </div>
+        <div className="text-sm text-muted-foreground">
+          {isComplete
+            ? t("timer.complete")
+            : `${Math.ceil(timeRemaining / 60)} ${t("timer.minutes")} ${t(
+                "timer.remaining"
+              )}`}
+        </div>
+      </div>
+
       {/* Tratak practice area */}
       <div
         ref={tratakContainerRef}
@@ -282,7 +350,7 @@ export function TratakPractice({
             height: getResponsiveCircleSize(),
           }}
           animate={
-            showPulsation && !isPaused
+            showPulsation && isPlaying
               ? {
                   boxShadow: [
                     `0 0 10px 0px ${circleColor}40`,
@@ -307,7 +375,7 @@ export function TratakPractice({
               height: getResponsivePointSize(),
             }}
             animate={
-              showPulsation && !isPaused
+              showPulsation && isPlaying
                 ? {
                     boxShadow: [
                       `0 0 5px 0px ${pointColor}80`,
@@ -401,7 +469,7 @@ export function TratakPractice({
                         <Slider
                           value={[circleSize]}
                           min={100}
-                          max={450}
+                          max={300}
                           step={10}
                           onValueChange={(value) => setCircleSize(value[0])}
                         />
@@ -563,10 +631,38 @@ export function TratakPractice({
         </AnimatePresence>
       </div>
 
+      {/* Practice Controls */}
+      <div className="flex justify-center gap-4">
+        <Button onClick={togglePlayPause} size="lg">
+          {isPlaying ? (
+            <Pause className="h-5 w-5 mr-2" />
+          ) : (
+            <Play className="h-5 w-5 mr-2" />
+          )}
+          {isPlaying ? t("timer.pause") : t("timer.start")}
+        </Button>
+        <Button variant="outline" onClick={resetPractice}>
+          <RotateCcw className="h-4 w-4 mr-2" />
+          {t("timer.reset")}
+        </Button>
+      </div>
+
+      {/* Instructions - moved below the practice area */}
       <div className="text-center max-w-md mx-auto px-4 bg-card rounded-lg p-4 shadow-sm">
         <h3 className="text-lg font-medium mb-2">{t("tratak.instructions")}</h3>
         <p className="text-muted-foreground">{t("tratak.instructionsText")}</p>
       </div>
+
+      {/* Completion Message */}
+      {isComplete && (
+        <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
+          <p className="text-green-800 dark:text-green-200 font-medium">
+            {locale === "en"
+              ? "Tratak practice complete! Well done."
+              : "Prática de Tratak completa! Muito bem."}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { use } from "react";
 import { motion } from "framer-motion";
 import { PracticeModule } from "@/components/practice-module";
 import { useTranslation } from "@/hooks/use-translation";
@@ -11,9 +12,10 @@ import { Button } from "@/components/ui/button";
 export default function PracticePage({
   params,
 }: {
-  params: { locale: string; practice: string };
+  params: Promise<{ locale: string; practice: string }>;
 }) {
-  const t = useTranslation(params.locale);
+  const { locale, practice } = use(params);
+  const t = useTranslation(locale);
   const validPractices = [
     "breathing",
     "meditation",
@@ -21,13 +23,13 @@ export default function PracticePage({
     "muscle-relaxation",
   ];
 
-  if (!validPractices.includes(params.practice)) {
+  if (!validPractices.includes(practice)) {
     notFound();
   }
 
   // Get practice-specific content
   const getPracticeInfo = () => {
-    switch (params.practice) {
+    switch (practice) {
       case "breathing":
         return {
           title: t("practices.breathing.title"),
@@ -113,16 +115,14 @@ export default function PracticePage({
               transition={{ duration: 0.6 }}
               className="mb-8"
             >
-              <Link href={`/${params.locale}/practices`}>
+              <Link href={`/${locale}/practices`}>
                 <Button
                   variant="ghost"
                   className="group flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-300"
                 >
                   <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
                   <span className="text-sm font-medium">
-                    {params.locale === "en"
-                      ? "All Practices"
-                      : "Todas as Práticas"}
+                    {locale === "en" ? "All Practices" : "Todas as Práticas"}
                   </span>
                 </Button>
               </Link>
@@ -149,9 +149,7 @@ export default function PracticePage({
                   <Leaf className="h-4 w-4 text-primary" />
                 </motion.div>
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {params.locale === "en"
-                    ? "Mindful Practice"
-                    : "Prática Mindful"}
+                  {locale === "en" ? "Mindful Practice" : "Prática Mindful"}
                 </span>
                 <Sparkles className="h-4 w-4 text-primary animate-pulse" />
               </motion.div>
@@ -187,7 +185,7 @@ export default function PracticePage({
                   <span className="w-2 h-2 bg-primary/50 rounded-full animate-pulse delay-200"></span>
                 </div>
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {params.locale === "en"
+                  {locale === "en"
                     ? "Ready when you are"
                     : "Pronto quando você estiver"}
                 </span>
@@ -211,7 +209,7 @@ export default function PracticePage({
             transition={{ duration: 0.8, delay: 0.8 }}
             className="max-w-4xl mx-auto"
           >
-            <PracticeModule practice={params.practice} locale={params.locale} />
+            <PracticeModule practice={practice} locale={locale} />
           </motion.div>
         </div>
       </section>
@@ -232,18 +230,18 @@ export default function PracticePage({
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-white/20 shadow-lg">
               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                {params.locale === "en" ? "Take your time" : "Vá no seu ritmo"}
+                {locale === "en" ? "Take your time" : "Vá no seu ritmo"}
               </span>
             </div>
 
             <h3 className="text-2xl md:text-3xl font-light tracking-tight bg-gradient-to-r from-slate-900 via-primary to-slate-900 dark:from-slate-100 dark:via-primary dark:to-slate-100 bg-clip-text text-transparent">
-              {params.locale === "en"
+              {locale === "en"
                 ? "Every moment of mindfulness counts"
                 : "Cada momento de mindfulness conta"}
             </h3>
 
             <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-              {params.locale === "en"
+              {locale === "en"
                 ? "Remember, there's no perfect way to practice. Simply being here is already a step toward greater well-being."
                 : "Lembre-se, não há uma maneira perfeita de praticar. Simplesmente estar aqui já é um passo em direção ao maior bem-estar."}
             </p>

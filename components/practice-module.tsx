@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TimerSelector } from "@/components/timer-selector";
-import { TimerProgress } from "@/components/timer-progress";
 import { useTranslation } from "@/hooks/use-translation";
 import { Leaf, Settings, Play } from "lucide-react";
 import { BreathingPractice } from "@/components/practices/breathing-practice";
@@ -29,18 +28,20 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
   const router = useRouter();
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
   const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const [selectedBreathingPattern, setSelectedBreathingPattern] =
     useState("balanced");
   const { addSession } = useStore();
 
   const handleTimerSelect = (minutes: number) => {
-    setSelectedDuration(minutes);
+    if (minutes && minutes > 0 && !isNaN(minutes)) {
+      setSelectedDuration(minutes);
+    }
   };
 
   const handleStart = () => {
-    setIsActive(true);
-    setIsPaused(false);
+    if (selectedDuration && selectedDuration > 0) {
+      setIsActive(true);
+    }
   };
 
   const handleComplete = () => {
@@ -54,10 +55,6 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
     }
   };
 
-  const handleTimerActiveChange = (active: boolean) => {
-    setIsPaused(!active);
-  };
-
   const handleBack = () => {
     router.push(`/${locale}/practices`);
   };
@@ -65,7 +62,6 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
   // Add a new function to handle going back to the selection screen
   const handleBackToSelection = () => {
     setIsActive(false);
-    setIsPaused(false);
   };
 
   // Get the selected breathing pattern
@@ -140,8 +136,9 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
         return (
           <BreathingPractice
             locale={locale}
-            isPaused={isPaused}
+            duration={selectedDuration}
             pattern={getSelectedBreathingPattern()}
+            onComplete={handleComplete}
           />
         );
       case "meditation":
@@ -149,19 +146,12 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
           <MeditationPractice locale={locale} duration={selectedDuration} />
         );
       case "tratak":
-        return (
-          <TratakPractice
-            locale={locale}
-            duration={selectedDuration}
-            isPaused={isPaused}
-          />
-        );
+        return <TratakPractice locale={locale} duration={selectedDuration} />;
       case "muscle-relaxation":
         return (
           <MuscleRelaxationPractice
             locale={locale}
             duration={selectedDuration}
-            isPaused={isPaused}
           />
         );
       default:
@@ -290,24 +280,6 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
             <div className="bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
               {renderPracticeComponent()}
             </div>
-
-            {/* Timer controls below the practice (except for muscle relaxation which has its own timer) */}
-            {practice !== "muscle-relaxation" && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg"
-              >
-                <TimerProgress
-                  durationMinutes={selectedDuration || 7}
-                  locale={locale}
-                  onComplete={handleComplete}
-                  autoStart={true}
-                  onActiveChange={handleTimerActiveChange}
-                />
-              </motion.div>
-            )}
           </motion.div>
         )}
       </AnimatePresence>

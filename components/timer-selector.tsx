@@ -42,14 +42,26 @@ export function TimerSelector({ locale, onSelect }: TimerSelectorProps) {
 
     setCustomMode(false);
     const minutes = Number.parseInt(value, 10);
-    setLastSelectedTimer(minutes);
-    onSelect(minutes);
+
+    // Validate the parsed value
+    if (!isNaN(minutes) && minutes > 0) {
+      setLastSelectedTimer(minutes);
+      onSelect(minutes);
+    }
   };
 
   const handleCustomSubmit = () => {
-    setLastSelectedTimer(customMinutes);
-    onSelect(customMinutes);
-    setCustomMode(false);
+    // Validate custom minutes input
+    if (
+      customMinutes &&
+      !isNaN(customMinutes) &&
+      customMinutes > 0 &&
+      customMinutes <= 60
+    ) {
+      setLastSelectedTimer(customMinutes);
+      onSelect(customMinutes);
+      setCustomMode(false);
+    }
   };
 
   return (
@@ -79,10 +91,13 @@ export function TimerSelector({ locale, onSelect }: TimerSelectorProps) {
               type="number"
               min="1"
               max="60"
-              value={customMinutes}
-              onChange={(e) =>
-                setCustomMinutes(Number.parseInt(e.target.value, 10))
-              }
+              value={customMinutes || ""}
+              onChange={(e) => {
+                const value = Number.parseInt(e.target.value, 10);
+                if (!isNaN(value) && value > 0) {
+                  setCustomMinutes(value);
+                }
+              }}
               className="w-full"
             />
           </div>

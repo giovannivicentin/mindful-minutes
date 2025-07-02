@@ -24,23 +24,41 @@ export function TimerProgress({
   const t = useTranslation(locale);
   const totalSeconds = durationMinutes * 60;
   const [secondsRemaining, setSecondsRemaining] = useState(totalSeconds);
-  const [isActive, setIsActive] = useState(autoStart);
+  const [isActive, setIsActive] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const hasNotifiedParentRef = useRef(false);
 
+  // Initialize timer state
   useEffect(() => {
+    // Validate durationMinutes to prevent NaN
+    const validDuration =
+      durationMinutes && !isNaN(durationMinutes) && durationMinutes > 0
+        ? durationMinutes
+        : 7;
+    const totalSecs = validDuration * 60;
+
     // Reset timer when duration changes
-    setSecondsRemaining(durationMinutes * 60);
-    setIsActive(autoStart);
+    setSecondsRemaining(totalSecs);
     setIsComplete(false);
+
+    // Only set initial active state if autoStart is true and we haven't notified parent yet
+    if (autoStart && !hasNotifiedParentRef.current && validDuration > 0) {
+      setIsActive(true);
+      hasNotifiedParentRef.current = true;
+    }
   }, [durationMinutes, autoStart]);
 
+  // Handle timer active state changes
   useEffect(() => {
     // Notify parent component when active state changes
     if (onActiveChange) {
       onActiveChange(isActive);
     }
+  }, [isActive, onActiveChange]);
 
+  // Timer countdown logic
+  useEffect(() => {
     if (isActive && secondsRemaining > 0) {
       intervalRef.current = setInterval(() => {
         setSecondsRemaining((prev) => {
@@ -63,25 +81,38 @@ export function TimerProgress({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isActive, secondsRemaining, onComplete, onActiveChange]);
+  }, [isActive, secondsRemaining, onComplete]);
 
   const toggleTimer = () => {
     setIsActive(!isActive);
   };
 
   const resetTimer = () => {
-    setSecondsRemaining(totalSeconds);
+    const validDuration =
+      durationMinutes && !isNaN(durationMinutes) && durationMinutes > 0
+        ? durationMinutes
+        : 7;
+    setSecondsRemaining(validDuration * 60);
     setIsActive(false);
     setIsComplete(false);
+    hasNotifiedParentRef.current = false;
   };
 
   const formatTime = (seconds: number) => {
+    // Handle NaN, negative, or invalid values
+    if (!seconds || isNaN(seconds) || seconds < 0) {
+      return "0:00";
+    }
+
     const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const progress = ((totalSeconds - secondsRemaining) / totalSeconds) * 100;
+  const progress =
+    totalSeconds > 0
+      ? ((totalSeconds - secondsRemaining) / totalSeconds) * 100
+      : 0;
 
   return (
     <div className="space-y-4">

@@ -21,7 +21,6 @@ export default function PracticesPage({
         {/* Enhanced Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/50 to-purple-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900" />
 
-        {/* Animated Background Elements */}
         <div className="absolute inset-0">
           <motion.div
             animate={{

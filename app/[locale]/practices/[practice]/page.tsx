@@ -16,12 +16,7 @@ export default function PracticePage({
 }) {
   const { locale, practice } = use(params);
   const t = useTranslation(locale);
-  const validPractices = [
-    "breathing",
-    "meditation",
-    "tratak",
-    "muscle-relaxation",
-  ];
+  const validPractices = ["breathing", "tratak", "muscle-relaxation"];
 
   if (!validPractices.includes(practice)) {
     notFound();
@@ -36,13 +31,6 @@ export default function PracticePage({
           description: t("practices.breathing.description"),
           gradient: "from-blue-500/20 via-cyan-500/15 to-teal-500/20",
           iconGradient: "from-blue-400/20 to-cyan-400/40",
-        };
-      case "meditation":
-        return {
-          title: t("practices.meditation.title"),
-          description: t("practices.meditation.description"),
-          gradient: "from-purple-500/20 via-indigo-500/15 to-blue-500/20",
-          iconGradient: "from-purple-400/20 to-indigo-400/40",
         };
       case "tratak":
         return {

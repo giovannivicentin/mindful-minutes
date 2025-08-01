@@ -8,7 +8,6 @@ import { TimerSelector } from "@/components/timer-selector";
 import { useTranslation } from "@/hooks/use-translation";
 import { Leaf, Settings, Play } from "lucide-react";
 import { BreathingPractice } from "@/components/practices/breathing-practice";
-import { MeditationPractice } from "@/components/practices/meditation-practice";
 import { TratakPractice } from "@/components/practices/tratak-practice";
 import { MuscleRelaxationPractice } from "@/components/practices/muscle-relaxation-practice";
 import {
@@ -140,10 +139,6 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
             pattern={getSelectedBreathingPattern()}
             onComplete={handleComplete}
           />
-        );
-      case "meditation":
-        return (
-          <MeditationPractice locale={locale} duration={selectedDuration} />
         );
       case "tratak":
         return <TratakPractice locale={locale} duration={selectedDuration} />;

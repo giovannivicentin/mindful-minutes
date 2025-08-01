@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/use-translation";
-import { ArrowRight, Brain, Heart, Mountain } from "lucide-react";
+import { ArrowRight, Heart, Mountain, Eye } from "lucide-react";
 
 export function FeaturedPractices({ locale }: { locale: string }) {
   const t = useTranslation(locale);
@@ -25,17 +25,17 @@ export function FeaturedPractices({ locale }: { locale: string }) {
       color: "from-rose-500/20 to-rose-500/5",
     },
     {
-      id: "meditation",
-      icon: <Brain className="h-5 w-5" />,
-      title: t("practices.meditation.title"),
-      description: t("practices.meditation.description"),
-      color: "from-blue-500/20 to-blue-500/5",
+      id: "tratak",
+      icon: <Eye className="h-5 w-5" />,
+      title: t("practices.tratak.title"),
+      description: t("practices.tratak.description"),
+      color: "from-amber-500/20 to-amber-500/5",
     },
     {
-      id: "visualization",
+      id: "muscle-relaxation",
       icon: <Mountain className="h-5 w-5" />,
-      title: t("practices.visualization.title"),
-      description: t("practices.visualization.description"),
+      title: t("practices.muscle-relaxation.title"),
+      description: t("practices.muscle-relaxation.description"),
       color: "from-emerald-500/20 to-emerald-500/5",
     },
   ];

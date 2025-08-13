@@ -8,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useTranslation } from "@/hooks/use-translation";
 import { useStore } from "@/lib/store";
@@ -20,8 +19,6 @@ interface TimerSelectorProps {
 
 export function TimerSelector({ locale, onSelect }: TimerSelectorProps) {
   const t = useTranslation(locale);
-  const [customMinutes, setCustomMinutes] = useState<number>(10);
-  const [customMode, setCustomMode] = useState(false);
   const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
   const { lastSelectedTimer, setLastSelectedTimer } = useStore();
 
@@ -34,13 +31,6 @@ export function TimerSelector({ locale, onSelect }: TimerSelectorProps) {
 
   const handleSelect = (value: string) => {
     setSelectedDuration(value);
-
-    if (value === "custom") {
-      setCustomMode(true);
-      return;
-    }
-
-    setCustomMode(false);
     const minutes = Number.parseInt(value, 10);
 
     // Validate the parsed value
@@ -50,65 +40,27 @@ export function TimerSelector({ locale, onSelect }: TimerSelectorProps) {
     }
   };
 
-  const handleCustomSubmit = () => {
-    // Validate custom minutes input
-    if (
-      customMinutes &&
-      !isNaN(customMinutes) &&
-      customMinutes > 0 &&
-      customMinutes <= 60
-    ) {
-      setLastSelectedTimer(customMinutes);
-      onSelect(customMinutes);
-      setCustomMode(false);
-    }
-  };
-
   return (
     <div className="space-y-4">
       <Label htmlFor="timer-select">{t("timer.select")}</Label>
-      {!customMode ? (
-        <Select
-          value={selectedDuration || undefined}
-          onValueChange={handleSelect}
-        >
-          <SelectTrigger id="timer-select" className="w-full">
-            <SelectValue placeholder={t("timer.select")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7">7 {t("timer.minutes")}</SelectItem>
-            <SelectItem value="12">12 {t("timer.minutes")}</SelectItem>
-            <SelectItem value="15">15 {t("timer.minutes")}</SelectItem>
-            <SelectItem value="18">18 {t("timer.minutes")}</SelectItem>
-            <SelectItem value="21">21 {t("timer.minutes")}</SelectItem>
-            <SelectItem value="custom">{t("timer.custom")}</SelectItem>
-          </SelectContent>
-        </Select>
-      ) : (
-        <div className="flex items-end gap-2">
-          <div className="flex-1">
-            <Input
-              type="number"
-              min="1"
-              max="60"
-              value={customMinutes || ""}
-              onChange={(e) => {
-                const value = Number.parseInt(e.target.value, 10);
-                if (!isNaN(value) && value > 0) {
-                  setCustomMinutes(value);
-                }
-              }}
-              className="w-full"
-            />
-          </div>
-          <button
-            onClick={handleCustomSubmit}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md"
-          >
-            {t("common.save")}
-          </button>
-        </div>
-      )}
+      <Select
+        value={selectedDuration || undefined}
+        onValueChange={handleSelect}
+      >
+        <SelectTrigger id="timer-select" className="w-full">
+          <SelectValue placeholder={t("timer.select")} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="1">1 {t("timer.minutes")}</SelectItem>
+          <SelectItem value="3">3 {t("timer.minutes")}</SelectItem>
+          <SelectItem value="5">5 {t("timer.minutes")}</SelectItem>
+          <SelectItem value="7">7 {t("timer.minutes")}</SelectItem>
+          <SelectItem value="12">12 {t("timer.minutes")}</SelectItem>
+          <SelectItem value="15">15 {t("timer.minutes")}</SelectItem>
+          <SelectItem value="18">18 {t("timer.minutes")}</SelectItem>
+          <SelectItem value="21">21 {t("timer.minutes")}</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 }

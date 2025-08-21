@@ -6,14 +6,18 @@ import { FeaturedPractices } from "@/components/featured-practices";
 import { BenefitsSection } from "@/components/benefits-section";
 import { HeroSection } from "@/components/hero-section";
 
-export default function HomePage({ params }: { params: { locale: string } }) {
-  const t = useTranslation(params.locale);
-  const locale = params.locale;
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = useTranslation(locale);
 
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
       {/* Enhanced Hero Section */}
-      <HeroSection locale={params.locale} />
+      <HeroSection locale={locale} />
 
       {/* Featured Practices */}
       <section className="relative py-24 overflow-hidden">
@@ -41,7 +45,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
             </div>
           </div>
 
-          <FeaturedPractices locale={params.locale} />
+          <FeaturedPractices locale={locale} />
         </div>
       </section>
 
@@ -53,7 +57,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-indigo-400/10 rounded-full blur-3xl" />
 
         <div className="container relative px-4 md:px-6">
-          <BenefitsSection locale={params.locale} />
+          <BenefitsSection locale={locale} />
         </div>
       </section>
 
@@ -85,7 +89,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Link href={`/${params.locale}/practices`}>
+              <Link href={`/${locale}/practices`}>
                 <Button
                   size="lg"
                   className="group relative px-8 py-4 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl text-lg font-medium"

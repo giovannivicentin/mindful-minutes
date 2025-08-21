@@ -2,19 +2,19 @@ import type React from "react";
 import { notFound } from "next/navigation";
 import { dictionaries } from "@/dictionaries";
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
+
   // Validate that the locale exists in our dictionaries
-  if (!Object.keys(dictionaries).includes(params.locale)) {
+  if (!Object.prototype.hasOwnProperty.call(dictionaries, locale)) {
     notFound();
   }
 
-  // Just return the children without wrapping in html/body tags
-  // The root layout will handle the HTML structure
   return children;
 }

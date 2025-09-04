@@ -71,8 +71,20 @@ export const en = {
         "Each practice is designed to help you reduce stress, improve focus, and enhance your overall well-being in just minutes.",
       hint: "Choose a practice above to begin",
     },
-
-    // Breathing practice
+    page: {
+      backToAll: "All Practices",
+      badge: "Mindful Practice",
+      quickInfo: {
+        ready: "Ready when you are",
+      },
+      encouragement: {
+        badge: "Take your time",
+        title: "Every moment of mindfulness counts",
+        text: "Remember, there's no perfect way to practice. Simply being here is already a step toward greater well-being.",
+      },
+      genericTitle: "Practice",
+      genericDescription: "Mindfulness practice",
+    },
     breathing: {
       title: "Guided Breathing",
       description:

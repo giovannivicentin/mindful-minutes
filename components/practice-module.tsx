@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TimerSelector } from "@/components/timer-selector";
@@ -24,7 +23,6 @@ interface PracticeModuleProps {
 
 export function PracticeModule({ practice, locale }: PracticeModuleProps) {
   const t = useTranslation(locale);
-  const router = useRouter();
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [selectedBreathingPattern, setSelectedBreathingPattern] =
@@ -44,7 +42,6 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
   };
 
   const handleComplete = () => {
-    // Record the completed session
     if (selectedDuration) {
       addSession({
         practice,
@@ -54,16 +51,10 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
     }
   };
 
-  const handleBack = () => {
-    router.push(`/${locale}/practices`);
-  };
-
-  // Add a new function to handle going back to the selection screen
   const handleBackToSelection = () => {
     setIsActive(false);
   };
 
-  // Get the selected breathing pattern
   const getSelectedBreathingPattern = (): BreathingPattern => {
     const patterns = {
       balanced: {
@@ -158,9 +149,7 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
     }
   };
 
-  const getPracticeTitle = () => {
-    return t(`practices.${practice}.title`);
-  };
+  const getPracticeTitle = () => t(`practices.${practice}.title`);
 
   return (
     <div className="w-full">
@@ -192,9 +181,7 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
                   {getPracticeTitle()}
                 </CardTitle>
                 <p className="text-slate-600 dark:text-slate-400 mt-2">
-                  {locale === "en"
-                    ? "Customize your practice session"
-                    : "Personalize sua sessão de prática"}
+                  {t("practiceModule.customize")}
                 </p>
               </CardHeader>
 
@@ -264,7 +251,7 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
               </Button>
 
               <div className="flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-white/20">
-                <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                   {selectedDuration} {t("timer.minutes")}
                 </span>

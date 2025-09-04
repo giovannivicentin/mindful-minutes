@@ -317,7 +317,36 @@ export const en = {
       hours10: "10 Hours of Practice",
       allPractices: "Tried All Practices",
     },
+    streakCard: {
+      nextMilestone: "Next milestone",
+      daysToGo: "days to go",
+      status: {
+        active: "Active Streak",
+        broken: "Streak Broken",
+        none: "No Streak Yet",
+      },
+      personalBest: "Personal Best",
+      longestStreakLabel: "longest streak",
+      messages: {
+        new: "Start your first streak!",
+        broken: "Ready to start a new streak?",
+        start: "Great start! Keep it going!",
+        momentum: "Building momentum!",
+        fire: "You're on fire!",
+        incredible: "Incredible dedication!",
+      },
+      achievements: {
+        title: "Streak Achievements",
+        labels: {
+          gettingStarted: "Getting Started",
+          weekWarrior: "Week Warrior",
+          monthlyMaster: "Monthly Master",
+          quarterlyChampion: "Quarterly Champion",
+        },
+      },
+    },
   },
+
   theme: {
     toggle: "Toggle theme",
     light: "Light",
@@ -335,6 +364,8 @@ export const en = {
     changeSettings: "Change Settings",
     mute: "Mute",
     unmute: "Unmute",
+    day: "day",
+    days: "days",
   },
   audio: {
     error: {

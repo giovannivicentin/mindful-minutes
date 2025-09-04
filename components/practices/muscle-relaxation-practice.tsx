@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "@/hooks/use-translation";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +19,7 @@ import { useStore } from "@/lib/store";
 
 interface MuscleRelaxationPracticeProps {
   locale: string;
-  duration: number;
+  duration: number; // minutes
   isPaused?: boolean;
 }
 
@@ -27,13 +27,13 @@ interface Segment {
   id: string;
   titleKey: string;
   instructionKey: string;
-  duration: number;
+  duration: number; // seconds
   phases: Phase[];
 }
 
 interface Phase {
   name: string;
-  duration: number;
+  duration: number; // seconds
   description: string;
 }
 
@@ -43,9 +43,9 @@ export function MuscleRelaxationPractice({
   isPaused = false,
 }: MuscleRelaxationPracticeProps) {
   const t = useTranslation(locale);
-  const { addSession } = useStore();
+  const addSession = useStore((s) => s.addSession);
 
-  // State management
+  // State
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSegment, setCurrentSegment] = useState(0);
   const [currentPhase, setCurrentPhase] = useState(0);
@@ -56,7 +56,7 @@ export function MuscleRelaxationPractice({
   const [showTransition, setShowTransition] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
 
-  // Audio state management
+  // Audio state
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [audioError, setAudioError] = useState<string | null>(null);
   const [audioLoaded, setAudioLoaded] = useState(false);
@@ -67,10 +67,11 @@ export function MuscleRelaxationPractice({
   const phaseStartTimeRef = useRef<number | null>(null);
   const segmentStartTimeRef = useRef<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hasLoggedCompleteRef = useRef(false);
 
-  // Define all 15 segments with phases
-  const getSegments = (): Segment[] => {
-    const segmentDuration = Math.floor((duration * 60) / 15);
+  // Build segments (memoized)
+  const segments: Segment[] = useMemo(() => {
+    const segmentDuration = Math.floor((duration * 60) / 15); // seconds
 
     const createPhases = (hasPreparation = false): Phase[] => {
       if (hasPreparation) {
@@ -82,7 +83,6 @@ export function MuscleRelaxationPractice({
           },
         ];
       }
-
       const phaseDuration = Math.floor(segmentDuration / 4);
       return [
         {
@@ -225,12 +225,17 @@ export function MuscleRelaxationPractice({
         phases: createPhases(true),
       },
     ];
-  };
+  }, [duration, locale, t]);
 
-  const segments = getSegments();
+  const currentSegmentData = segments[currentSegment];
+  const currentPhaseData = currentSegmentData?.phases[currentPhase];
 
-  // Initialize audio
+  // Audio init + cleanup (named handlers so we can remove them)
   useEffect(() => {
+    let handleLoaded: (() => void) | null = null;
+    let handleError: ((e: Event) => void) | null = null;
+    let handleCanPlay: (() => void) | null = null;
+
     const initializeAudio = async () => {
       try {
         if (!audioRef.current) {
@@ -239,24 +244,22 @@ export function MuscleRelaxationPractice({
           audioRef.current.volume = audioVolume;
           audioRef.current.preload = "auto";
 
-          // Audio event listeners
-          audioRef.current.addEventListener("loadeddata", () => {
+          handleLoaded = () => {
             setAudioLoaded(true);
             setAudioError(null);
-          });
-
-          audioRef.current.addEventListener("error", (e) => {
+          };
+          handleError = (e: Event) => {
             console.error("Audio loading error:", e);
             setAudioError(t("audio.error.load"));
             setAudioLoaded(false);
-          });
+          };
+          handleCanPlay = () => setAudioLoaded(true);
 
-          audioRef.current.addEventListener("canplaythrough", () => {
-            setAudioLoaded(true);
-          });
+          audioRef.current.addEventListener("loadeddata", handleLoaded);
+          audioRef.current.addEventListener("error", handleError);
+          audioRef.current.addEventListener("canplaythrough", handleCanPlay);
 
-          // Try to load the audio
-          await audioRef.current.load();
+          await audioRef.current.load?.();
         }
       } catch (error) {
         console.error("Audio initialization error:", error);
@@ -269,15 +272,18 @@ export function MuscleRelaxationPractice({
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
-        audioRef.current.removeEventListener("loadeddata", () => {});
-        audioRef.current.removeEventListener("error", () => {});
-        audioRef.current.removeEventListener("canplaythrough", () => {});
+        if (handleLoaded)
+          audioRef.current.removeEventListener("loadeddata", handleLoaded);
+        if (handleError)
+          audioRef.current.removeEventListener("error", handleError);
+        if (handleCanPlay)
+          audioRef.current.removeEventListener("canplaythrough", handleCanPlay);
         audioRef.current = null;
       }
     };
   }, [locale, audioVolume, t]);
 
-  // Handle audio playback
+  // Audio playback
   useEffect(() => {
     if (audioRef.current && audioLoaded) {
       if (isPlaying && !isPaused && !isAudioMuted) {
@@ -291,7 +297,7 @@ export function MuscleRelaxationPractice({
     }
   }, [isPlaying, isPaused, isAudioMuted, audioLoaded, t]);
 
-  // Update audio volume
+  // Volume sync
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = audioVolume;
@@ -304,55 +310,38 @@ export function MuscleRelaxationPractice({
       intervalRef.current = setInterval(() => {
         const now = Date.now();
 
-        if (!phaseStartTimeRef.current) {
-          phaseStartTimeRef.current = now;
-        }
-        if (!segmentStartTimeRef.current) {
-          segmentStartTimeRef.current = now;
-        }
+        if (!phaseStartTimeRef.current) phaseStartTimeRef.current = now;
+        if (!segmentStartTimeRef.current) segmentStartTimeRef.current = now;
 
-        const currentSegmentData = segments[currentSegment];
-        const currentPhaseData = currentSegmentData.phases[currentPhase];
+        const seg = segments[currentSegment];
+        const ph = seg.phases[currentPhase];
 
         const phaseElapsed = (now - phaseStartTimeRef.current) / 1000;
         const segmentElapsed = (now - segmentStartTimeRef.current) / 1000;
 
-        // Update phase progress
-        const phaseProgressPercent = Math.min(
-          (phaseElapsed / currentPhaseData.duration) * 100,
-          100
+        // Per-phase progress
+        setPhaseProgress(Math.min((phaseElapsed / ph.duration) * 100, 100));
+
+        // Per-segment progress
+        setSegmentProgress(
+          Math.min((segmentElapsed / seg.duration) * 100, 100)
         );
-        setPhaseProgress(phaseProgressPercent);
 
-        // Update segment progress
-        const segmentProgressPercent = Math.min(
-          (segmentElapsed / currentSegmentData.duration) * 100,
-          100
-        );
-        setSegmentProgress(segmentProgressPercent);
+        // Total progress / time remaining
+        const perSegmentSec = (duration * 60) / 15;
+        const totalElapsed = currentSegment * perSegmentSec + segmentElapsed;
+        setTotalProgress(Math.min((totalElapsed / (duration * 60)) * 100, 100));
+        setTimeRemaining(Math.max(duration * 60 - totalElapsed, 0));
 
-        // Update total progress
-        const totalElapsed =
-          currentSegment * ((duration * 60) / 15) + segmentElapsed;
-        const totalProgressPercent = Math.min(
-          (totalElapsed / (duration * 60)) * 100,
-          100
-        );
-        setTotalProgress(totalProgressPercent);
-
-        // Update time remaining
-        const remaining = Math.max(duration * 60 - totalElapsed, 0);
-        setTimeRemaining(remaining);
-
-        // Check if phase is complete
-        if (phaseElapsed >= currentPhaseData.duration) {
-          if (currentPhase < currentSegmentData.phases.length - 1) {
-            // Move to next phase
+        // Phase / segment transitions
+        if (phaseElapsed >= ph.duration) {
+          if (currentPhase < seg.phases.length - 1) {
+            // next phase
             setCurrentPhase(currentPhase + 1);
             phaseStartTimeRef.current = now;
             setPhaseProgress(0);
           } else {
-            // Move to next segment
+            // next segment
             if (currentSegment < segments.length - 1) {
               showSegmentTransition();
               setCurrentSegment(currentSegment + 1);
@@ -362,60 +351,49 @@ export function MuscleRelaxationPractice({
               setSegmentProgress(0);
               setPhaseProgress(0);
             } else {
-              // Practice complete
+              // Complete
               setIsPlaying(false);
               setIsComplete(true);
-              // Record session completion
-              addSession({
-                practice: "muscle-relaxation",
-                duration: duration,
-                date: new Date().toISOString(),
-              });
-              if (audioRef.current) {
-                audioRef.current.pause();
-              }
+              if (audioRef.current) audioRef.current.pause();
               clearInterval(intervalRef.current!);
             }
           }
         }
       }, 100);
     } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     }
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [
-    isPlaying,
-    isPaused,
-    currentSegment,
-    currentPhase,
-    segments,
-    duration,
-    addSession,
-  ]);
+  }, [isPlaying, isPaused, currentSegment, currentPhase, segments, duration]);
 
-  // Show transition animation
+  // Post-commit: log session once when complete
+  useEffect(() => {
+    if (isComplete && !hasLoggedCompleteRef.current) {
+      hasLoggedCompleteRef.current = true;
+      addSession({
+        practice: "muscle-relaxation",
+        duration,
+        date: new Date().toISOString(),
+      });
+    }
+  }, [isComplete, addSession, duration]);
+
+  // UI helpers
   const showSegmentTransition = () => {
     setShowTransition(true);
     setTimeout(() => setShowTransition(false), 1500);
   };
 
-  // Control functions
   const startPractice = () => {
     setIsPlaying(true);
     phaseStartTimeRef.current = Date.now();
     segmentStartTimeRef.current = Date.now();
   };
 
-  const pausePractice = () => {
-    setIsPlaying(false);
-  };
+  const pausePractice = () => setIsPlaying(false);
 
   const resumePractice = () => {
     setIsPlaying(true);
@@ -433,6 +411,7 @@ export function MuscleRelaxationPractice({
     setTotalProgress(0);
     setTimeRemaining(duration * 60);
     setIsComplete(false);
+    hasLoggedCompleteRef.current = false;
     phaseStartTimeRef.current = null;
     segmentStartTimeRef.current = null;
     if (audioRef.current) {
@@ -465,18 +444,14 @@ export function MuscleRelaxationPractice({
     }
   };
 
-  const toggleAudioMute = () => {
-    setIsAudioMuted(!isAudioMuted);
-  };
+  const toggleAudioMute = () => setIsAudioMuted((v) => !v);
 
-  // Format time
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Get phase color
   const getPhaseColor = (phaseName: string) => {
     switch (phaseName) {
       case "preparation":
@@ -493,9 +468,6 @@ export function MuscleRelaxationPractice({
         return "from-gray-400/20 to-gray-600/20";
     }
   };
-
-  const currentSegmentData = segments[currentSegment];
-  const currentPhaseData = currentSegmentData?.phases[currentPhase];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 p-4 md:p-8">
@@ -533,7 +505,7 @@ export function MuscleRelaxationPractice({
           </div>
         </div>
 
-        {/* Transition Animation */}
+        {/* Transition Overlay */}
         <AnimatePresence>
           {showTransition && (
             <motion.div
@@ -565,7 +537,7 @@ export function MuscleRelaxationPractice({
           )}
         </AnimatePresence>
 
-        {/* Header with Progress */}
+        {/* Header + Overall Progress */}
         <div className="text-center space-y-6">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -582,13 +554,11 @@ export function MuscleRelaxationPractice({
             </p>
           </motion.div>
 
-          {/* Overall Progress Ring */}
           <div className="relative w-32 h-32 mx-auto">
             <svg
               className="w-32 h-32 transform -rotate-90"
               viewBox="0 0 100 100"
             >
-              {/* Background circle */}
               <circle
                 cx="50"
                 cy="50"
@@ -598,7 +568,6 @@ export function MuscleRelaxationPractice({
                 strokeWidth="2"
                 className="text-slate-200 dark:text-slate-700"
               />
-              {/* Progress circle */}
               <motion.circle
                 cx="50"
                 cy="50"
@@ -641,7 +610,7 @@ export function MuscleRelaxationPractice({
           </div>
         </div>
 
-        {/* Main Content Area */}
+        {/* Main Card */}
         <motion.div
           key={currentSegment}
           initial={{ opacity: 0, x: 20 }}
@@ -649,7 +618,6 @@ export function MuscleRelaxationPractice({
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-xl border border-white/20"
         >
-          {/* Current Segment Title */}
           <div className="text-center space-y-6 mb-12">
             <motion.h2
               initial={{ opacity: 0, y: 10 }}
@@ -660,7 +628,6 @@ export function MuscleRelaxationPractice({
               {t(currentSegmentData.titleKey)}
             </motion.h2>
 
-            {/* Phase Indicator */}
             {currentPhaseData && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -681,7 +648,7 @@ export function MuscleRelaxationPractice({
             )}
           </div>
 
-          {/* Instruction Text */}
+          {/* Instruction */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -693,7 +660,7 @@ export function MuscleRelaxationPractice({
             </p>
           </motion.div>
 
-          {/* Phase Progress Bar */}
+          {/* Phase Progress */}
           {currentPhaseData && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -759,7 +726,7 @@ export function MuscleRelaxationPractice({
             <div className="flex items-center space-x-4">
               {!isPlaying ? (
                 <Button
-                  onClick={startPractice}
+                  onClick={totalProgress > 0 ? resumePractice : startPractice}
                   size="lg"
                   className="rounded-xl px-8 py-3 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-lg"
                 >
@@ -837,7 +804,7 @@ export function MuscleRelaxationPractice({
           </div>
         </motion.div>
 
-        {/* Completion State */}
+        {/* Completion */}
         {isComplete && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

@@ -11,6 +11,8 @@ interface PracticeInsightsProps {
   locale: string;
 }
 
+type TimeSlotKey = "morning" | "afternoon" | "evening" | "night" | "";
+
 interface WeeklyData {
   week: string;
   minutes: number;
@@ -21,7 +23,7 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
   const t = useTranslation(locale);
   const { sessions } = useStore();
   const [weeklyData, setWeeklyData] = useState<WeeklyData[]>([]);
-  const [favoriteTime, setFavoriteTime] = useState<string>("");
+  const [favoriteTime, setFavoriteTime] = useState<TimeSlotKey>("");
   const [favoritePractice, setFavoritePractice] = useState<string>("");
 
   useEffect(() => {
@@ -62,27 +64,24 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
       setWeeklyData(weeks);
     };
 
-    // Calculate favorite practice time
+    // Calculate favorite practice time (store slot key, translate at render)
     const calculateFavoriteTime = () => {
-      const timeSlots = new Map<string, number>();
+      const timeSlots = new Map<Exclude<TimeSlotKey, "">, number>();
 
       sessions.forEach((session) => {
         const hour = new Date(session.date).getHours();
-        let timeSlot = "";
+        let slot: Exclude<TimeSlotKey, "">;
 
-        if (hour >= 5 && hour < 12)
-          timeSlot = locale === "en" ? "Morning" : "Manhã";
-        else if (hour >= 12 && hour < 17)
-          timeSlot = locale === "en" ? "Afternoon" : "Tarde";
-        else if (hour >= 17 && hour < 21)
-          timeSlot = locale === "en" ? "Evening" : "Noite";
-        else timeSlot = locale === "en" ? "Night" : "Madrugada";
+        if (hour >= 5 && hour < 12) slot = "morning";
+        else if (hour >= 12 && hour < 17) slot = "afternoon";
+        else if (hour >= 17 && hour < 21) slot = "evening";
+        else slot = "night";
 
-        timeSlots.set(timeSlot, (timeSlots.get(timeSlot) || 0) + 1);
+        timeSlots.set(slot, (timeSlots.get(slot) || 0) + 1);
       });
 
       let maxCount = 0;
-      let favoriteSlot = "";
+      let favoriteSlot: TimeSlotKey = "";
       timeSlots.forEach((count, slot) => {
         if (count > maxCount) {
           maxCount = count;
@@ -134,7 +133,7 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
       ? ((thisWeekMinutes - lastWeekMinutes) / lastWeekMinutes) * 100
       : 0;
 
-  // Calculate consistency score (percentage of days with practice in last 30 days)
+  // Consistency: % of days with practice in last 30 days
   const calculateConsistency = () => {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -178,7 +177,7 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
               <TrendingUp className="h-5 w-5 text-blue-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Weekly Progress" : "Progresso Semanal"}
+              {t("profile.insights.weeklyProgress.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -216,7 +215,7 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
               />
               <span>
                 {Math.abs(weeklyGrowth).toFixed(1)}%{" "}
-                {locale === "en" ? "vs last week" : "vs semana passada"}
+                {t("profile.overview.thisWeek.vsLastWeek")}
               </span>
             </div>
           )}
@@ -231,7 +230,7 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
               <Target className="h-5 w-5 text-green-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Consistency" : "Consistência"}
+              {t("profile.overview.consistency.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -241,16 +240,13 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
               {consistencyScore}%
             </div>
             <div className="text-sm text-slate-600 dark:text-slate-400">
-              {locale === "en"
-                ? "Practice days in last 30 days"
-                : "Dias de prática nos últimos 30 dias"}
+              {t("profile.insights.consistency.practiceDaysLast30")}
             </div>
           </div>
           <Progress value={consistencyScore} className="h-3" />
           <div className="text-xs text-center text-slate-500 dark:text-slate-400">
-            {locale === "en"
-              ? `${Math.round((consistencyScore * 30) / 100)} out of 30 days`
-              : `${Math.round((consistencyScore * 30) / 100)} de 30 dias`}
+            {Math.round((consistencyScore * 30) / 100)}{" "}
+            {t("profile.insights.consistency.outOf30Days")}
           </div>
         </CardContent>
       </Card>
@@ -263,7 +259,7 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
               <Clock className="h-5 w-5 text-purple-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Average Session" : "Sessão Média"}
+              {t("profile.overview.averageSession.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -272,14 +268,11 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
             {averageSession}m
           </div>
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            {locale === "en"
-              ? "Average practice duration"
-              : "Duração média da prática"}
+            {t("profile.insights.averageSession.description")}
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            {locale === "en"
-              ? `Based on ${sessions.length} sessions`
-              : `Baseado em ${sessions.length} sessões`}
+            {t("profile.insights.averageSession.basedOnPrefix")}{" "}
+            {sessions.length} {t("profile.overview.thisWeek.sessionsLabel")}
           </div>
         </CardContent>
       </Card>
@@ -292,18 +285,18 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
               <Zap className="h-5 w-5 text-orange-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Peak Time" : "Horário Preferido"}
+              {t("profile.overview.peakTime.title")}
             </CardTitle>
           </div>
         </CardHeader>
         <CardContent className="text-center space-y-2">
           <div className="text-2xl font-bold text-orange-500">
-            {favoriteTime}
+            {favoriteTime
+              ? t(`profile.overview.timeSlots.${favoriteTime}`)
+              : "-"}
           </div>
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            {locale === "en"
-              ? "Most active practice time"
-              : "Horário mais ativo de prática"}
+            {t("profile.overview.peakTime.mostActive")}
           </div>
         </CardContent>
       </Card>
@@ -316,7 +309,7 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
               <Award className="h-5 w-5 text-pink-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Favorite Practice" : "Prática Favorita"}
+              {t("profile.overview.favoritePractice.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -325,9 +318,7 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
             {favoritePractice ? getPracticeDisplayName(favoritePractice) : "-"}
           </div>
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            {locale === "en"
-              ? "Most practiced activity"
-              : "Atividade mais praticada"}
+            {t("profile.overview.favoritePractice.mostPracticed")}
           </div>
         </CardContent>
       </Card>
@@ -340,7 +331,7 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
               <Calendar className="h-5 w-5 text-indigo-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Total Practice" : "Prática Total"}
+              {t("profile.overview.totalPractice.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -349,14 +340,11 @@ export function PracticeInsights({ locale }: PracticeInsightsProps) {
             {Math.floor(totalMinutes / 60)}h {totalMinutes % 60}m
           </div>
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            {locale === "en"
-              ? "Lifetime practice time"
-              : "Tempo total de prática"}
+            {t("profile.insights.totalPractice.lifetimeLabel")}
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            {locale === "en"
-              ? `${sessions.length} sessions completed`
-              : `${sessions.length} sessões completadas`}
+            {sessions.length}{" "}
+            {t("profile.overview.totalPractice.sessionsCompleted")}
           </div>
         </CardContent>
       </Card>

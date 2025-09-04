@@ -378,6 +378,22 @@ export const en = {
         night: "Night",
       },
     },
+    insights: {
+      weeklyProgress: {
+        title: "Weekly Progress",
+      },
+      consistency: {
+        practiceDaysLast30: "Practice days in last 30 days",
+        outOf30Days: "out of 30 days",
+      },
+      averageSession: {
+        description: "Average practice duration",
+        basedOnPrefix: "Based on",
+      },
+      totalPractice: {
+        lifetimeLabel: "Lifetime practice time",
+      },
+    },
   },
   theme: {
     toggle: "Toggle theme",

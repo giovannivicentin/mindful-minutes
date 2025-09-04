@@ -11,6 +11,7 @@ import {
   Volume2,
   VolumeX,
   AlertCircle,
+  Check,
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { BreathingPattern } from "./breathing-pattern-selector";
@@ -771,7 +772,7 @@ export function BreathingPractice({
                 transition={{ delay: 0.2, type: "spring" }}
                 className="text-white text-2xl"
               >
-                ✓
+                <Check className="h-8 w-8" />
               </motion.div>
             </div>
             <h3 className="text-xl font-medium text-green-800 dark:text-green-200">

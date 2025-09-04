@@ -12,6 +12,7 @@ import {
   Volume2,
   VolumeX,
   AlertCircle,
+  Check,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -818,7 +819,7 @@ export function MuscleRelaxationPractice({
                 transition={{ delay: 0.2, type: "spring" }}
                 className="text-white text-2xl"
               >
-                ✓
+                <Check className="h-8 w-8" />
               </motion.div>
             </div>
             <h3 className="text-xl font-medium text-green-800 dark:text-green-200">

@@ -69,9 +69,7 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
 
       // Start from today or yesterday
       const checkDate = new Date(today);
-      if (!hasToday) {
-        checkDate.setDate(checkDate.getDate() - 1);
-      }
+      if (!hasToday) checkDate.setDate(checkDate.getDate() - 1);
 
       // Count consecutive days backwards
       while (checkDate >= new Date(practiceDates[0])) {
@@ -119,14 +117,10 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
       );
 
       if (currentStreak > 0) {
-        if (daysSinceLastPractice <= 1) {
-          streakStatus = "active";
-        } else {
-          streakStatus = "broken";
-        }
+        streakStatus = daysSinceLastPractice <= 1 ? "active" : "broken";
       }
 
-      // Calculate progress towards next milestone
+      // Progress towards next milestone
       const nextMilestone = getNextMilestone(currentStreak);
       const streakProgress =
         nextMilestone > 0 ? (currentStreak / nextMilestone) * 100 : 100;
@@ -151,42 +145,19 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
   const getStreakMessage = () => {
     const { currentStreak, streakStatus } = streakData;
 
-    if (streakStatus === "new") {
-      return locale === "en"
-        ? "Start your first streak!"
-        : "Comece sua primeira sequência!";
-    }
-
-    if (streakStatus === "broken") {
-      return locale === "en"
-        ? "Ready to start a new streak?"
-        : "Pronto para começar uma nova sequência?";
-    }
-
-    if (currentStreak === 1) {
-      return locale === "en"
-        ? "Great start! Keep it going!"
-        : "Ótimo começo! Continue assim!";
-    }
-
-    if (currentStreak < 7) {
-      return locale === "en" ? "Building momentum!" : "Construindo momentum!";
-    }
-
-    if (currentStreak < 30) {
-      return locale === "en" ? "You're on fire!" : "Você está pegando fogo!";
-    }
-
-    return locale === "en" ? "Incredible dedication!" : "Dedicação incrível!";
+    if (streakStatus === "new") return t("profile.streakCard.messages.new");
+    if (streakStatus === "broken")
+      return t("profile.streakCard.messages.broken");
+    if (currentStreak === 1) return t("profile.streakCard.messages.start");
+    if (currentStreak < 7) return t("profile.streakCard.messages.momentum");
+    if (currentStreak < 30) return t("profile.streakCard.messages.fire");
+    return t("profile.streakCard.messages.incredible");
   };
 
   const getStreakColor = () => {
     const { currentStreak, streakStatus } = streakData;
-
-    if (streakStatus === "broken" || streakStatus === "new") {
+    if (streakStatus === "broken" || streakStatus === "new")
       return "text-slate-500 dark:text-slate-400";
-    }
-
     if (currentStreak < 3) return "text-orange-500";
     if (currentStreak < 7) return "text-yellow-500";
     if (currentStreak < 30) return "text-red-500";
@@ -194,13 +165,11 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
   };
 
   const getStreakIcon = () => {
-    const { streakStatus } = streakData;
-
-    if (streakStatus === "active") {
-      return <Flame className="h-8 w-8 text-orange-500 animate-pulse" />;
-    }
-
-    return <Flame className="h-8 w-8 text-slate-400" />;
+    return streakData.streakStatus === "active" ? (
+      <Flame className="h-8 w-8 text-orange-500 animate-pulse" />
+    ) : (
+      <Flame className="h-8 w-8 text-slate-400" />
+    );
   };
 
   const nextMilestone = getNextMilestone(streakData.currentStreak);
@@ -216,7 +185,7 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
             </div>
             <div>
               <CardTitle className="text-xl font-semibold">
-                {locale === "en" ? "Current Streak" : "Sequência Atual"}
+                {t("profile.streak")}
               </CardTitle>
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 {getStreakMessage()}
@@ -236,12 +205,8 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
             </motion.div>
             <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
               {streakData.currentStreak === 1
-                ? locale === "en"
-                  ? "day"
-                  : "dia"
-                : locale === "en"
-                ? "days"
-                : "dias"}
+                ? t("common.day")
+                : t("common.days")}
             </div>
           </div>
 
@@ -250,16 +215,16 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600 dark:text-slate-400">
-                  {locale === "en" ? "Next milestone" : "Próxima meta"}
+                  {t("profile.streakCard.nextMilestone")}
                 </span>
                 <span className="font-medium">
-                  {nextMilestone} {locale === "en" ? "days" : "dias"}
+                  {nextMilestone} {t("common.days")}
                 </span>
               </div>
               <Progress value={streakData.streakProgress} className="h-3" />
               <div className="text-xs text-center text-slate-500 dark:text-slate-400">
                 {nextMilestone - streakData.currentStreak}{" "}
-                {locale === "en" ? "days to go" : "dias restantes"}
+                {t("profile.streakCard.daysToGo")}
               </div>
             </div>
           )}
@@ -277,16 +242,10 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
             />
             <span className="text-sm font-medium">
               {streakData.streakStatus === "active"
-                ? locale === "en"
-                  ? "Active Streak"
-                  : "Sequência Ativa"
+                ? t("profile.streakCard.status.active")
                 : streakData.streakStatus === "broken"
-                ? locale === "en"
-                  ? "Streak Broken"
-                  : "Sequência Quebrada"
-                : locale === "en"
-                ? "No Streak Yet"
-                : "Ainda Sem Sequência"}
+                ? t("profile.streakCard.status.broken")
+                : t("profile.streakCard.status.none")}
             </span>
           </div>
         </CardContent>
@@ -300,7 +259,7 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
               <Award className="h-8 w-8 text-purple-500" />
             </div>
             <CardTitle className="text-xl font-semibold">
-              {locale === "en" ? "Personal Best" : "Melhor Pessoal"}
+              {t("profile.streakCard.personalBest")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -315,38 +274,40 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
               {streakData.longestStreak}
             </motion.div>
             <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-              {locale === "en" ? "longest streak" : "maior sequência"}
+              {t("profile.streakCard.longestStreakLabel")}
             </div>
           </div>
 
           {/* Achievement levels */}
           <div className="space-y-3">
             <h4 className="font-medium text-slate-700 dark:text-slate-300">
-              {locale === "en"
-                ? "Streak Achievements"
-                : "Conquistas de Sequência"}
+              {t("profile.streakCard.achievements.title")}
             </h4>
             <div className="space-y-2">
               {[
                 {
                   days: 3,
-                  label: locale === "en" ? "Getting Started" : "Começando",
+                  label: t(
+                    "profile.streakCard.achievements.labels.gettingStarted"
+                  ),
                 },
                 {
                   days: 7,
-                  label:
-                    locale === "en" ? "Week Warrior" : "Guerreiro da Semana",
+                  label: t(
+                    "profile.streakCard.achievements.labels.weekWarrior"
+                  ),
                 },
                 {
                   days: 30,
-                  label: locale === "en" ? "Monthly Master" : "Mestre Mensal",
+                  label: t(
+                    "profile.streakCard.achievements.labels.monthlyMaster"
+                  ),
                 },
                 {
                   days: 90,
-                  label:
-                    locale === "en"
-                      ? "Quarterly Champion"
-                      : "Campeão Trimestral",
+                  label: t(
+                    "profile.streakCard.achievements.labels.quarterlyChampion"
+                  ),
                 },
               ].map((achievement) => (
                 <div
@@ -370,7 +331,7 @@ export function StreakDisplay({ locale }: StreakDisplayProps) {
                         : "text-slate-500"
                     }`}
                   >
-                    {achievement.days} {locale === "en" ? "days" : "dias"}
+                    {achievement.days} {t("common.days")}
                   </span>
                 </div>
               ))}

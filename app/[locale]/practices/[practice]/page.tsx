@@ -48,8 +48,8 @@ export default function PracticePage({
         };
       default:
         return {
-          title: "Practice",
-          description: "Mindfulness practice",
+          title: t("practices.page.genericTitle"),
+          description: t("practices.page.genericDescription"),
           gradient: "from-primary/20 via-blue-500/15 to-purple-500/20",
           iconGradient: "from-primary/20 to-blue-400/40",
         };
@@ -68,10 +68,7 @@ export default function PracticePage({
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
           <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.6, 0.3],
-            }}
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
             transition={{
               duration: 8,
               repeat: Number.POSITIVE_INFINITY,
@@ -80,10 +77,7 @@ export default function PracticePage({
             className={`absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br ${practiceInfo.gradient} rounded-full blur-3xl`}
           />
           <motion.div
-            animate={{
-              scale: [1.2, 1, 1.2],
-              opacity: [0.2, 0.5, 0.2],
-            }}
+            animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.5, 0.2] }}
             transition={{
               duration: 10,
               repeat: Number.POSITIVE_INFINITY,
@@ -110,7 +104,7 @@ export default function PracticePage({
                 >
                   <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
                   <span className="text-sm font-medium">
-                    {locale === "en" ? "All Practices" : "Todas as Práticas"}
+                    {t("practices.page.backToAll")}
                   </span>
                 </Button>
               </Link>
@@ -137,7 +131,7 @@ export default function PracticePage({
                   <Leaf className="h-4 w-4 text-primary" />
                 </motion.div>
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {locale === "en" ? "Mindful Practice" : "Prática Mindful"}
+                  {t("practices.page.badge")}
                 </span>
                 <Sparkles className="h-4 w-4 text-primary animate-pulse" />
               </motion.div>
@@ -173,9 +167,7 @@ export default function PracticePage({
                   <span className="w-2 h-2 bg-primary/50 rounded-full animate-pulse delay-200"></span>
                 </div>
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {locale === "en"
-                    ? "Ready when you are"
-                    : "Pronto quando você estiver"}
+                  {t("practices.page.quickInfo.ready")}
                 </span>
               </motion.div>
             </div>
@@ -218,20 +210,16 @@ export default function PracticePage({
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-white/20 shadow-lg">
               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                {locale === "en" ? "Take your time" : "Vá no seu ritmo"}
+                {t("practices.page.encouragement.badge")}
               </span>
             </div>
 
             <h3 className="text-2xl md:text-3xl font-light tracking-tight bg-gradient-to-r from-slate-900 via-primary to-slate-900 dark:from-slate-100 dark:via-primary dark:to-slate-100 bg-clip-text text-transparent">
-              {locale === "en"
-                ? "Every moment of mindfulness counts"
-                : "Cada momento de mindfulness conta"}
+              {t("practices.page.encouragement.title")}
             </h3>
 
             <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-              {locale === "en"
-                ? "Remember, there's no perfect way to practice. Simply being here is already a step toward greater well-being."
-                : "Lembre-se, não há uma maneira perfeita de praticar. Simplesmente estar aqui já é um passo em direção ao maior bem-estar."}
+              {t("practices.page.encouragement.text")}
             </p>
           </motion.div>
         </div>

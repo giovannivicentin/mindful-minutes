@@ -4,6 +4,9 @@ export const en = {
     practices: "Practices",
     profile: "Profile",
   },
+  practiceModule: {
+    customize: "Customize your practice session",
+  },
   home: {
     hero: {
       title: "Mindful Minutes",

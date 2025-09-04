@@ -72,6 +72,7 @@ export const en = {
       hint: "Choose a practice above to begin",
     },
 
+    // Breathing practice
     breathing: {
       title: "Guided Breathing",
       description:
@@ -111,14 +112,12 @@ export const en = {
         exhale: "Exhale",
         rest: "Rest",
         doubleInhaleNote: "Double inhale pattern",
-
         startPracticeCta: "Start Breathing Practice",
         completeTitle: "Breathing Practice Complete",
         completeMsg:
           "Take a moment to notice how you feel after this breathing exercise.",
         doneShort: "Complete!",
         again: "Practice Again",
-
         phaseLabels: {
           breatheIn: "Breathe In",
           breatheInMore: "Breathe In More",
@@ -345,8 +344,41 @@ export const en = {
         },
       },
     },
+    overview: {
+      totalPractice: {
+        title: "Total Practice",
+        sessionsCompleted: "sessions completed",
+      },
+      averageSession: {
+        title: "Average Session",
+        perSession: "per session",
+      },
+      thisWeek: {
+        title: "This Week",
+        sessionsLabel: "sessions",
+        vsLastWeek: "vs last week",
+      },
+      consistency: {
+        title: "Consistency",
+        last30Days: "last 30 days",
+        activeDaysLabel: "active days",
+      },
+      favoritePractice: {
+        title: "Favorite Practice",
+        mostPracticed: "most practiced",
+      },
+      peakTime: {
+        title: "Peak Time",
+        mostActive: "most active time",
+      },
+      timeSlots: {
+        morning: "Morning",
+        afternoon: "Afternoon",
+        evening: "Evening",
+        night: "Night",
+      },
+    },
   },
-
   theme: {
     toggle: "Toggle theme",
     light: "Light",

@@ -394,6 +394,56 @@ export const en = {
         lifetimeLabel: "Lifetime practice time",
       },
     },
+    achievements: {
+      title: "Achievements",
+      sections: {
+        earned: "Earned",
+        inProgress: "In Progress",
+        locked: "Locked",
+      },
+      items: {
+        firstSession: {
+          title: "First Steps",
+          description: "Complete your first practice session",
+        },
+        streak3: {
+          title: "Getting Started",
+          description: "Practice for 3 days in a row",
+        },
+        streak7: {
+          title: "Week Warrior",
+          description: "Practice for 7 days in a row",
+        },
+        streak30: {
+          title: "Monthly Master",
+          description: "Practice for 30 days in a row",
+        },
+        time60: {
+          title: "Hour Hero",
+          description: "Practice for 1 hour total",
+        },
+        time600: {
+          title: "Time Master",
+          description: "Practice for 10 hours total",
+        },
+        sessions10: {
+          title: "Dedicated Practitioner",
+          description: "Complete 10 practice sessions",
+        },
+        sessions50: {
+          title: "Practice Pro",
+          description: "Complete 50 practice sessions",
+        },
+        allPractices: {
+          title: "Explorer",
+          description: "Try all practice types",
+        },
+        consistent: {
+          title: "Consistency Champion",
+          description: "Practice 20 days in the last month",
+        },
+      },
+    },
   },
   theme: {
     toggle: "Toggle theme",

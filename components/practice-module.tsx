@@ -27,7 +27,7 @@ export function PracticeModule({ practice, locale }: PracticeModuleProps) {
   const [isActive, setIsActive] = useState(false);
   const [selectedBreathingPattern, setSelectedBreathingPattern] =
     useState("balanced");
-  const { addSession } = useStore();
+  const addSession = useStore((s) => s.addSession);
 
   const handleTimerSelect = (minutes: number) => {
     if (minutes && minutes > 0 && !isNaN(minutes)) {

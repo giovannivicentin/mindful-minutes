@@ -19,6 +19,8 @@ interface PracticeOverviewProps {
   locale: string;
 }
 
+type TimeSlotKey = "morning" | "afternoon" | "evening" | "night" | "";
+
 interface PracticeStats {
   totalSessions: number;
   totalMinutes: number;
@@ -27,7 +29,7 @@ interface PracticeStats {
   lastWeekSessions: number;
   weeklyGrowth: number;
   favoritePractice: string;
-  favoriteTime: string;
+  favoriteTime: TimeSlotKey;
   consistencyScore: number;
   activeDays: number;
 }
@@ -73,7 +75,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
       );
       const averageSession = Math.round(totalMinutes / totalSessions);
 
-      // Calculate weekly sessions
+      // Weekly sessions
       const now = new Date();
       const thisWeekStart = new Date(now);
       thisWeekStart.setDate(now.getDate() - now.getDay());
@@ -97,7 +99,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
           ? ((thisWeekSessions - lastWeekSessions) / lastWeekSessions) * 100
           : 0;
 
-      // Calculate favorite practice
+      // Favorite practice
       const practiceCount = new Map<string, number>();
       sessions.forEach((session) => {
         practiceCount.set(
@@ -115,24 +117,20 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
         }
       });
 
-      // Calculate favorite time
-      const timeSlots = new Map<string, number>();
+      const timeSlots = new Map<Exclude<TimeSlotKey, "">, number>();
       sessions.forEach((session) => {
         const hour = new Date(session.date).getHours();
-        let timeSlot = "";
+        let slot: Exclude<TimeSlotKey, "">;
 
-        if (hour >= 5 && hour < 12)
-          timeSlot = locale === "en" ? "Morning" : "Manhã";
-        else if (hour >= 12 && hour < 17)
-          timeSlot = locale === "en" ? "Afternoon" : "Tarde";
-        else if (hour >= 17 && hour < 21)
-          timeSlot = locale === "en" ? "Evening" : "Noite";
-        else timeSlot = locale === "en" ? "Night" : "Madrugada";
+        if (hour >= 5 && hour < 12) slot = "morning";
+        else if (hour >= 12 && hour < 17) slot = "afternoon";
+        else if (hour >= 17 && hour < 21) slot = "evening";
+        else slot = "night";
 
-        timeSlots.set(timeSlot, (timeSlots.get(timeSlot) || 0) + 1);
+        timeSlots.set(slot, (timeSlots.get(slot) || 0) + 1);
       });
 
-      let favoriteTime = "";
+      let favoriteTime: TimeSlotKey = "";
       let maxTimeCount = 0;
       timeSlots.forEach((count, slot) => {
         if (count > maxTimeCount) {
@@ -141,7 +139,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
         }
       });
 
-      // Calculate consistency score (last 30 days)
+      // Consistency (last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -155,7 +153,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
       );
       const consistencyScore = Math.round((uniqueDays.size / 30) * 100);
 
-      // Calculate active days
+      // Active days (all time)
       const allUniqueDays = new Set(
         sessions.map(
           (session) => new Date(session.date).toISOString().split("T")[0]
@@ -178,7 +176,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
     };
 
     calculateStats();
-  }, [sessions, locale]);
+  }, [sessions]);
 
   const getPracticeDisplayName = (practice: string) => {
     switch (practice) {
@@ -198,10 +196,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
   const formatTime = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-
-    if (hours > 0) {
-      return `${hours}h ${mins}m`;
-    }
+    if (hours > 0) return `${hours}h ${mins}m`;
     return `${mins}m`;
   };
 
@@ -215,7 +210,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
               <Clock className="h-5 w-5 text-blue-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Total Practice" : "Prática Total"}
+              {t("profile.overview.totalPractice.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -230,7 +225,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
           </motion.div>
           <div className="text-sm text-slate-600 dark:text-slate-400">
             {stats.totalSessions}{" "}
-            {locale === "en" ? "sessions completed" : "sessões completadas"}
+            {t("profile.overview.totalPractice.sessionsCompleted")}
           </div>
         </CardContent>
       </Card>
@@ -243,7 +238,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
               <Target className="h-5 w-5 text-green-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Average Session" : "Sessão Média"}
+              {t("profile.overview.averageSession.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -257,7 +252,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
             {stats.averageSession}m
           </motion.div>
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            {locale === "en" ? "per session" : "por sessão"}
+            {t("profile.overview.averageSession.perSession")}
           </div>
         </CardContent>
       </Card>
@@ -270,7 +265,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
               <TrendingUp className="h-5 w-5 text-purple-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "This Week" : "Esta Semana"}
+              {t("profile.overview.thisWeek.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -285,7 +280,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
               {stats.thisWeekSessions}
             </motion.div>
             <div className="text-sm text-slate-600 dark:text-slate-400">
-              {locale === "en" ? "sessions" : "sessões"}
+              {t("profile.overview.thisWeek.sessionsLabel")}
             </div>
           </div>
           {stats.weeklyGrowth !== 0 && (
@@ -303,7 +298,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
               />
               <span>
                 {Math.abs(stats.weeklyGrowth).toFixed(1)}%{" "}
-                {locale === "en" ? "vs last week" : "vs semana passada"}
+                {t("profile.overview.thisWeek.vsLastWeek")}
               </span>
             </div>
           )}
@@ -318,7 +313,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
               <Calendar className="h-5 w-5 text-orange-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Consistency" : "Consistência"}
+              {t("profile.overview.consistency.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -333,13 +328,13 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
               {stats.consistencyScore}%
             </motion.div>
             <div className="text-sm text-slate-600 dark:text-slate-400">
-              {locale === "en" ? "last 30 days" : "últimos 30 dias"}
+              {t("profile.overview.consistency.last30Days")}
             </div>
           </div>
           <Progress value={stats.consistencyScore} className="h-2" />
           <div className="text-xs text-center text-slate-500 dark:text-slate-400">
             {Math.round((stats.consistencyScore * 30) / 100)}{" "}
-            {locale === "en" ? "active days" : "dias ativos"}
+            {t("profile.overview.consistency.activeDaysLabel")}
           </div>
         </CardContent>
       </Card>
@@ -352,7 +347,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
               <Activity className="h-5 w-5 text-pink-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Favorite Practice" : "Prática Favorita"}
+              {t("profile.overview.favoritePractice.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -368,7 +363,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
               : "-"}
           </motion.div>
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            {locale === "en" ? "most practiced" : "mais praticada"}
+            {t("profile.overview.favoritePractice.mostPracticed")}
           </div>
         </CardContent>
       </Card>
@@ -381,7 +376,7 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
               <Zap className="h-5 w-5 text-indigo-500" />
             </div>
             <CardTitle className="text-lg font-semibold">
-              {locale === "en" ? "Peak Time" : "Horário Preferido"}
+              {t("profile.overview.peakTime.title")}
             </CardTitle>
           </div>
         </CardHeader>
@@ -392,10 +387,12 @@ export function PracticeOverview({ locale }: PracticeOverviewProps) {
             transition={{ duration: 0.8, delay: 0.5 }}
             className="text-2xl font-bold text-indigo-500"
           >
-            {stats.favoriteTime || "-"}
+            {stats.favoriteTime
+              ? t(`profile.overview.timeSlots.${stats.favoriteTime}`)
+              : "-"}
           </motion.div>
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            {locale === "en" ? "most active time" : "horário mais ativo"}
+            {t("profile.overview.peakTime.mostActive")}
           </div>
         </CardContent>
       </Card>

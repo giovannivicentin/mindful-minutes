@@ -26,10 +26,7 @@ export default function ProfilePage({
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
           <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.6, 0.3],
-            }}
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
             transition={{
               duration: 8,
               repeat: Number.POSITIVE_INFINITY,
@@ -38,10 +35,7 @@ export default function ProfilePage({
             className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-primary/20 to-blue-500/20 rounded-full blur-3xl"
           />
           <motion.div
-            animate={{
-              scale: [1.2, 1, 1.2],
-              opacity: [0.2, 0.5, 0.2],
-            }}
+            animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.5, 0.2] }}
             transition={{
               duration: 10,
               repeat: Number.POSITIVE_INFINITY,
@@ -75,9 +69,7 @@ export default function ProfilePage({
                   <Leaf className="h-4 w-4 text-primary" />
                 </motion.div>
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {locale === "en"
-                    ? "Your Mindfulness Journey"
-                    : "Sua Jornada de Mindfulness"}
+                  {t("profile.hero.badge")}
                 </span>
                 <Sparkles className="h-4 w-4 text-primary animate-pulse" />
               </motion.div>
@@ -96,9 +88,7 @@ export default function ProfilePage({
                 </h1>
 
                 <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed font-light">
-                  {locale === "en"
-                    ? "Track your consistency, celebrate achievements, and discover insights about your mindfulness practice."
-                    : "Acompanhe sua consistência, celebre conquistas e descubra insights sobre sua prática de mindfulness."}
+                  {t("profile.hero.subtitle")}
                 </p>
               </motion.div>
 
@@ -112,23 +102,19 @@ export default function ProfilePage({
                 <div className="flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-full border border-white/20">
                   <User className="h-4 w-4 text-primary" />
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                    {locale === "en" ? "Personal Dashboard" : "Painel Pessoal"}
+                    {t("profile.hero.stats.personalDashboard")}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-full border border-white/20">
                   <TrendingUp className="h-4 w-4 text-primary" />
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                    {locale === "en"
-                      ? "Streak Tracking"
-                      : "Acompanhamento de Sequência"}
+                    {t("profile.hero.stats.streakTracking")}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-full border border-white/20">
                   <Target className="h-4 w-4 text-primary" />
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                    {locale === "en"
-                      ? "Progress Insights"
-                      : "Insights de Progresso"}
+                    {t("profile.hero.stats.progressInsights")}
                   </span>
                 </div>
               </motion.div>
@@ -190,22 +176,16 @@ export default function ProfilePage({
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-white/20 shadow-lg">
               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                {locale === "en"
-                  ? "Keep building your streak"
-                  : "Continue construindo sua sequência"}
+                {t("profile.encouragement.badge")}
               </span>
             </div>
 
             <h3 className="text-2xl md:text-3xl font-light tracking-tight bg-gradient-to-r from-slate-900 via-primary to-slate-900 dark:from-slate-100 dark:via-primary dark:to-slate-100 bg-clip-text text-transparent">
-              {locale === "en"
-                ? "Consistency creates transformation"
-                : "Consistência cria transformação"}
+              {t("profile.encouragement.title")}
             </h3>
 
             <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-              {locale === "en"
-                ? "Every practice session builds momentum. Your dedication to mindfulness is creating lasting positive change in your life."
-                : "Cada sessão de prática constrói momentum. Sua dedicação ao mindfulness está criando mudanças positivas duradouras em sua vida."}
+              {t("profile.encouragement.text")}
             </p>
           </motion.div>
         </div>

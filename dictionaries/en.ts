@@ -444,6 +444,22 @@ export const en = {
         },
       },
     },
+    hero: {
+      badge: "Your Mindfulness Journey",
+      subtitle:
+        "Track your consistency, celebrate achievements, and discover insights about your mindfulness practice.",
+      stats: {
+        personalDashboard: "Personal Dashboard",
+        streakTracking: "Streak Tracking",
+        progressInsights: "Progress Insights",
+      },
+    },
+
+    encouragement: {
+      badge: "Keep building your streak",
+      title: "Consistency creates transformation",
+      text: "Every practice session builds momentum. Your dedication to mindfulness is creating lasting positive change in your life.",
+    },
   },
   theme: {
     toggle: "Toggle theme",

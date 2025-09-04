@@ -45,9 +45,7 @@ const PracticeCardComponent = ({
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-        style={{
-          backgroundImage: `url(${card.image})`,
-        }}
+        style={{ backgroundImage: `url(${card.image})` }}
       />
 
       {/* Gradient Overlay */}
@@ -172,7 +170,7 @@ export function PracticeGrid({ locale }: { locale: string }) {
         </div>
       </div>
 
-      {/* Practice Cards Grid - Optimized for 3 items */}
+      {/* Practice Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-8xl mx-auto">
         {practices.map((practice, index) => (
           <PracticeCardComponent
@@ -190,9 +188,7 @@ export function PracticeGrid({ locale }: { locale: string }) {
       <div className="text-center mt-20">
         <div className="max-w-2xl mx-auto space-y-6">
           <p className="text-muted-foreground text-lg leading-relaxed">
-            {locale === "en"
-              ? "Each practice is designed to help you find calm, reduce stress, and improve your mental well-being in just minutes."
-              : "Cada prática é projetada para ajudá-lo a encontrar calma, reduzir o estresse e melhorar seu bem-estar mental em apenas alguns minutos."}
+            {t("practices.cta.subtitle")}
           </p>
         </div>
       </div>

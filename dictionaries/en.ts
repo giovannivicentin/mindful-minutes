@@ -58,6 +58,22 @@ export const en = {
     title: "Mindfulness Practices",
     description:
       "Choose a practice to help reduce anxiety, stress, and prevent burnout.",
+
+    // NEW
+    badge: "Choose Your Practice",
+    stats: {
+      durationShort: "7-21 minutes",
+      scienceBacked: "Science-backed",
+      instantRelief: "Instant relief",
+    },
+    cta: {
+      badge: "Start your wellness journey",
+      title: "Ready to find your calm?",
+      subtitle:
+        "Each practice is designed to help you reduce stress, improve focus, and enhance your overall well-being in just minutes.",
+      hint: "Choose a practice above to begin",
+    },
+
     breathing: {
       title: "Guided Breathing",
       description:

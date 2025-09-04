@@ -14,7 +14,6 @@ export const metadata: Metadata = {
   title: "Mindful Minutes",
   description: "Quick sessions to lower anxiety, stress and prevent burnout",
   manifest: "/manifest.json",
-  generator: "v0.dev",
 };
 
 export const viewport: Viewport = {
@@ -35,10 +34,8 @@ export default function RootLayout({
 }) {
   const locale = params.locale || "en";
 
-  // Check if the locale is Arabic to set RTL direction
   const isRtl = locale === "ar";
 
-  // Validate that the locale exists in our dictionaries
   const validLocale = Object.keys(dictionaries).includes(locale)
     ? locale
     : "en";

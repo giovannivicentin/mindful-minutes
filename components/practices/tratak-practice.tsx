@@ -39,7 +39,7 @@ export function TratakPractice({
   isPaused = false,
 }: TratakPracticeProps) {
   const t = useTranslation(locale);
-  const { addSession } = useStore();
+  const addSession = useStore((s) => s.addSession);
   const { theme } = useTheme();
 
   const [showControls, setShowControls] = useState(true);
@@ -53,6 +53,7 @@ export function TratakPractice({
   const tratakContainerRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const hasLoggedCompleteRef = useRef(false);
 
   // Customization states with theme-aware defaults
   const [circleSize, setCircleSize] = useState(200);
@@ -69,6 +70,10 @@ export function TratakPractice({
   const [showPulsation, setShowPulsation] = useState(false);
   const [brightness, setBrightness] = useState(100);
 
+  useEffect(() => {
+    setTimeRemaining(duration * 60);
+  }, [duration]);
+
   // Update colors when theme changes
   useEffect(() => {
     if (theme === "dark") {
@@ -82,19 +87,14 @@ export function TratakPractice({
     }
   }, [theme]);
 
-  // Timer logic
+  // Timer logic (avoid calling store here; just mark complete)
   useEffect(() => {
-    if (isPlaying && timeRemaining > 0 && !isPaused) {
+    if (isPlaying && !isPaused) {
       intervalRef.current = setInterval(() => {
         setTimeRemaining((prev) => {
           if (prev <= 1) {
             setIsPlaying(false);
             setIsComplete(true);
-            addSession({
-              practice: "tratak",
-              duration: duration,
-              date: new Date().toISOString(),
-            });
             if (audioRef.current) audioRef.current.pause();
             return 0;
           }
@@ -108,7 +108,19 @@ export function TratakPractice({
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPlaying, timeRemaining, duration, addSession, isPaused]);
+  }, [isPlaying, isPaused]);
+
+  // Post-commit: log session once when complete
+  useEffect(() => {
+    if (isComplete && !hasLoggedCompleteRef.current) {
+      hasLoggedCompleteRef.current = true;
+      addSession({
+        practice: "tratak",
+        duration,
+        date: new Date().toISOString(),
+      });
+    }
+  }, [isComplete, addSession, duration]);
 
   // Check if audio files are available
   useEffect(() => {
@@ -266,11 +278,12 @@ export function TratakPractice({
     };
   }, [isPlaying, isMuted, audioAvailable]);
 
-  const togglePlayPause = () => setIsPlaying(!isPlaying);
+  const togglePlayPause = () => setIsPlaying((p) => !p);
 
   const resetPractice = () => {
     setIsPlaying(false);
     setIsComplete(false);
+    hasLoggedCompleteRef.current = false;
     setTimeRemaining(duration * 60);
     if (audioRef.current) {
       audioRef.current.pause();
@@ -278,12 +291,12 @@ export function TratakPractice({
     }
   };
 
-  const toggleMute = () => setIsMuted(!isMuted);
-  const toggleControls = () => setShowControls(!showControls);
+  const toggleMute = () => setIsMuted((m) => !m);
+  const toggleControls = () => setShowControls((s) => !s);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 

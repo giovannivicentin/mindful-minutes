@@ -58,8 +58,6 @@ export const en = {
     title: "Mindfulness Practices",
     description:
       "Choose a practice to help reduce anxiety, stress, and prevent burnout.",
-
-    // NEW
     badge: "Choose Your Practice",
     stats: {
       durationShort: "7-21 minutes",
@@ -104,6 +102,46 @@ export const en = {
           title: "Double Inhale + Sighing Exhale",
           purpose:
             "Rapid relief of panic spikes; quick mood lift in under 2 minutes.",
+        },
+      },
+      ui: {
+        patternHeader: "Breathing Pattern",
+        inhale: "Inhale",
+        hold: "Hold",
+        exhale: "Exhale",
+        rest: "Rest",
+        doubleInhaleNote: "Double inhale pattern",
+
+        startPracticeCta: "Start Breathing Practice",
+        completeTitle: "Breathing Practice Complete",
+        completeMsg:
+          "Take a moment to notice how you feel after this breathing exercise.",
+        doneShort: "Complete!",
+        again: "Practice Again",
+
+        phaseLabels: {
+          breatheIn: "Breathe In",
+          breatheInMore: "Breathe In More",
+          breatheOut: "Breathe Out",
+          hold: "Hold",
+          rest: "Rest",
+        },
+        phaseNames: {
+          firstInhale: "First Inhale",
+          secondInhale: "Second Inhale",
+          inhale: "Inhale",
+          holdIn: "Hold",
+          exhale: "Exhale",
+          holdOut: "Rest",
+        },
+        subtext: {
+          inhaleFirst: "Breathe in partially",
+          inhale: "Breathe in slowly",
+          inhale2: "Fill your lungs completely",
+          holdIn: "Hold your breath",
+          exhaleSigh: "Release with a sigh",
+          exhale: "Breathe out slowly",
+          holdOut: "Pause before next breath",
         },
       },
     },
@@ -255,6 +293,8 @@ export const en = {
     resume: "Resume",
     reset: "Reset",
     complete: "Practice Complete",
+    timeRemainingLabel: "Time Remaining",
+    sessionDuration: "Session Duration",
   },
   profile: {
     title: "Your Progress",
@@ -293,5 +333,15 @@ export const en = {
     back: "Back",
     close: "Close",
     changeSettings: "Change Settings",
+    mute: "Mute",
+    unmute: "Unmute",
+  },
+  audio: {
+    error: {
+      load: "Unable to load background music. The practice will continue without audio.",
+      unavailable:
+        "Background music is not available. The practice will continue without audio.",
+      play: "Unable to play background music. Please check your browser settings.",
+    },
   },
 };

@@ -84,35 +84,24 @@ export function BreathingPractice({
           audioRef.current.preload = "auto";
 
           // Audio event listeners
-          audioRef.current.addEventListener("loadeddata", () => {
+          const handleLoaded = () => {
             setAudioLoaded(true);
             setAudioError(null);
-          });
-
-          audioRef.current.addEventListener("error", (e) => {
-            console.error("Audio loading error:", e);
-            setAudioError(
-              locale === "en"
-                ? "Unable to load background music. The practice will continue without audio."
-                : "Não foi possível carregar a música de fundo. A prática continuará sem áudio."
-            );
+          };
+          const handleError = () => {
+            setAudioError(t("audio.error.load"));
             setAudioLoaded(false);
-          });
+          };
+          const handleCanPlay = () => setAudioLoaded(true);
 
-          audioRef.current.addEventListener("canplaythrough", () => {
-            setAudioLoaded(true);
-          });
+          audioRef.current.addEventListener("loadeddata", handleLoaded);
+          audioRef.current.addEventListener("error", handleError);
+          audioRef.current.addEventListener("canplaythrough", handleCanPlay);
 
-          // Try to load the audio
-          await audioRef.current.load();
+          await audioRef.current.load?.();
         }
-      } catch (error) {
-        console.error("Audio initialization error:", error);
-        setAudioError(
-          locale === "en"
-            ? "Background music is not available. The practice will continue without audio."
-            : "A música de fundo não está disponível. A prática continuará sem áudio."
-        );
+      } catch {
+        setAudioError(t("audio.error.unavailable"));
       }
     };
 
@@ -121,9 +110,6 @@ export function BreathingPractice({
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
-        audioRef.current.removeEventListener("loadeddata", () => {});
-        audioRef.current.removeEventListener("error", () => {});
-        audioRef.current.removeEventListener("canplaythrough", () => {});
         audioRef.current = null;
       }
     };
@@ -133,19 +119,14 @@ export function BreathingPractice({
   useEffect(() => {
     if (audioRef.current && audioLoaded) {
       if (isPlaying && !isPaused && !isAudioMuted) {
-        audioRef.current.play().catch((error) => {
-          console.error("Audio playback error:", error);
-          setAudioError(
-            locale === "en"
-              ? "Unable to play background music. Please check your browser settings."
-              : "Não foi possível reproduzir a música de fundo. Verifique as configurações do seu navegador."
-          );
+        audioRef.current.play().catch(() => {
+          setAudioError(t("audio.error.play"));
         });
       } else {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, isPaused, isAudioMuted, audioLoaded, locale]);
+  }, [isPlaying, isPaused, isAudioMuted, audioLoaded, t]);
 
   // Practice timer logic
   useEffect(() => {
@@ -161,11 +142,9 @@ export function BreathingPractice({
             // Practice complete
             setIsPlaying(false);
             setIsComplete(true);
-            if (audioRef.current) {
-              audioRef.current.pause();
-            }
+            audioRef.current?.pause();
             clearInterval(practiceIntervalRef.current!);
-            onComplete(); // Call the completion callback
+            onComplete();
             return 0;
           }
           return newTime;
@@ -290,7 +269,6 @@ export function BreathingPractice({
       if (sessionStartTimeRef.current === null) {
         sessionStartTimeRef.current = timestamp;
       }
-
       if (phaseStartTimeRef.current === null) {
         phaseStartTimeRef.current = timestamp;
       }
@@ -350,20 +328,15 @@ export function BreathingPractice({
     setPhaseTime(0);
     setTotalElapsedTime(0);
     setInhaleCount(1);
-    setTimeRemaining(duration * 60); // Ensure proper reset
+    setTimeRemaining(duration * 60);
     phaseStartTimeRef.current = null;
     sessionStartTimeRef.current = null;
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
-    // Clear any running intervals
-    if (practiceIntervalRef.current) {
-      clearInterval(practiceIntervalRef.current);
-    }
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-    }
+    if (practiceIntervalRef.current) clearInterval(practiceIntervalRef.current);
+    if (animationRef.current) cancelAnimationFrame(animationRef.current);
   };
 
   const toggleAudioMute = () => {
@@ -375,20 +348,16 @@ export function BreathingPractice({
     switch (phase) {
       case "inhale":
         return doubleInhale && inhaleCount === 1
-          ? locale === "en"
-            ? "First Inhale"
-            : "Primeira Inspiração"
-          : locale === "en"
-          ? "Inhale"
-          : "Inspire";
+          ? t("practices.breathing.ui.phaseNames.firstInhale")
+          : t("practices.breathing.ui.phaseNames.inhale");
       case "inhale-2":
-        return locale === "en" ? "Second Inhale" : "Segunda Inspiração";
+        return t("practices.breathing.ui.phaseNames.secondInhale");
       case "hold-in":
-        return locale === "en" ? "Hold" : "Segure";
+        return t("practices.breathing.ui.phaseNames.holdIn");
       case "exhale":
-        return locale === "en" ? "Exhale" : "Expire";
+        return t("practices.breathing.ui.phaseNames.exhale");
       case "hold-out":
-        return locale === "en" ? "Rest" : "Descanse";
+        return t("practices.breathing.ui.phaseNames.holdOut");
     }
   };
 
@@ -396,30 +365,18 @@ export function BreathingPractice({
     switch (phase) {
       case "inhale":
         return doubleInhale && inhaleCount === 1
-          ? locale === "en"
-            ? "Breathe in partially"
-            : "Respire parcialmente"
-          : locale === "en"
-          ? "Breathe in slowly"
-          : "Respire lentamente";
+          ? t("practices.breathing.ui.subtext.inhaleFirst")
+          : t("practices.breathing.ui.subtext.inhale");
       case "inhale-2":
-        return locale === "en"
-          ? "Fill your lungs completely"
-          : "Encha completamente os pulmões";
+        return t("practices.breathing.ui.subtext.inhale2");
       case "hold-in":
-        return locale === "en" ? "Hold your breath" : "Segure a respiração";
+        return t("practices.breathing.ui.subtext.holdIn");
       case "exhale":
         return doubleInhale
-          ? locale === "en"
-            ? "Release with a sigh"
-            : "Solte com um suspiro"
-          : locale === "en"
-          ? "Breathe out slowly"
-          : "Expire lentamente";
+          ? t("practices.breathing.ui.subtext.exhaleSigh")
+          : t("practices.breathing.ui.subtext.exhale");
       case "hold-out":
-        return locale === "en"
-          ? "Pause before next breath"
-          : "Pausa antes da próxima respiração";
+        return t("practices.breathing.ui.subtext.holdOut");
     }
   };
 
@@ -440,11 +397,7 @@ export function BreathingPractice({
   };
 
   const formatTime = (seconds: number) => {
-    // Handle NaN and invalid values
-    if (!seconds || isNaN(seconds) || seconds < 0) {
-      return "0:00";
-    }
-
+    if (!seconds || isNaN(seconds) || seconds < 0) return "0:00";
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, "0")}`;
@@ -564,34 +517,32 @@ export function BreathingPractice({
             {/* Pattern timing display */}
             <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl p-6 max-w-md mx-auto">
               <h3 className="text-lg font-medium mb-4 text-slate-800 dark:text-slate-200">
-                {locale === "en" ? "Breathing Pattern" : "Padrão de Respiração"}
+                {t("practices.breathing.ui.patternHeader")}
               </h3>
               <div className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <div className="flex justify-between">
-                  <span>{locale === "en" ? "Inhale:" : "Inspirar:"}</span>
+                  <span>{t("practices.breathing.ui.inhale")}:</span>
                   <span>{inhaleTime}s</span>
                 </div>
                 {holdAfterInhale > 0 && (
                   <div className="flex justify-between">
-                    <span>{locale === "en" ? "Hold:" : "Segurar:"}</span>
+                    <span>{t("practices.breathing.ui.hold")}:</span>
                     <span>{holdAfterInhale}s</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span>{locale === "en" ? "Exhale:" : "Expirar:"}</span>
+                  <span>{t("practices.breathing.ui.exhale")}:</span>
                   <span>{exhaleTime}s</span>
                 </div>
                 {holdAfterExhale > 0 && (
                   <div className="flex justify-between">
-                    <span>{locale === "en" ? "Rest:" : "Descansar:"}</span>
+                    <span>{t("practices.breathing.ui.rest")}:</span>
                     <span>{holdAfterExhale}s</span>
                   </div>
                 )}
                 {doubleInhale && (
                   <div className="text-xs text-primary mt-2">
-                    {locale === "en"
-                      ? "Double inhale pattern"
-                      : "Padrão de dupla inspiração"}
+                    {t("practices.breathing.ui.doubleInhaleNote")}
                   </div>
                 )}
               </div>
@@ -603,7 +554,7 @@ export function BreathingPractice({
                 {formatTime(timeRemaining)}
               </div>
               <div className="text-sm text-slate-500 dark:text-slate-400">
-                {locale === "en" ? "Session Duration" : "Duração da Sessão"}
+                {t("timer.sessionDuration")}
               </div>
             </div>
 
@@ -614,9 +565,7 @@ export function BreathingPractice({
               className="px-8 py-4 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl text-lg font-medium"
             >
               <Play className="h-5 w-5 mr-2" />
-              {locale === "en"
-                ? "Start Breathing Practice"
-                : "Iniciar Prática de Respiração"}
+              {t("practices.breathing.ui.startPracticeCta")}
             </Button>
           </motion.div>
         </div>
@@ -666,14 +615,15 @@ export function BreathingPractice({
                 {/* Phase indicator */}
                 <div className="relative z-10 text-lg font-medium text-primary-foreground px-4 py-2 rounded-full bg-primary/40 backdrop-blur-sm">
                   {phase === "inhale" &&
-                    (locale === "en" ? "Breathe In" : "Inspire")}
+                    t("practices.breathing.ui.phaseLabels.breatheIn")}
                   {phase === "inhale-2" &&
-                    (locale === "en" ? "Breathe In More" : "Inspire Mais")}
-                  {phase === "hold-in" && (locale === "en" ? "Hold" : "Segure")}
+                    t("practices.breathing.ui.phaseLabels.breatheInMore")}
+                  {phase === "hold-in" &&
+                    t("practices.breathing.ui.phaseLabels.hold")}
                   {phase === "exhale" &&
-                    (locale === "en" ? "Breathe Out" : "Expire")}
+                    t("practices.breathing.ui.phaseLabels.breatheOut")}
                   {phase === "hold-out" &&
-                    (locale === "en" ? "Rest" : "Descanse")}
+                    t("practices.breathing.ui.phaseLabels.rest")}
                 </div>
               </motion.div>
 
@@ -734,7 +684,7 @@ export function BreathingPractice({
                     {formatTime(timeRemaining)}
                   </div>
                   <div className="text-sm text-slate-500 dark:text-slate-400">
-                    {locale === "en" ? "Time Remaining" : "Tempo Restante"}
+                    {t("timer.timeRemainingLabel")}
                   </div>
                 </div>
 
@@ -746,7 +696,9 @@ export function BreathingPractice({
                     size="icon"
                     className="rounded-xl border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 bg-transparent"
                     aria-label={
-                      isPlaying ? t("timer.pause") : t("timer.resume")
+                      isPlaying && !isPaused
+                        ? t("timer.pause")
+                        : t("timer.resume")
                     }
                   >
                     {isPlaying && !isPaused ? (
@@ -762,7 +714,9 @@ export function BreathingPractice({
                       variant="outline"
                       size="icon"
                       className="rounded-xl border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 bg-transparent"
-                      aria-label={isAudioMuted ? "Unmute" : "Mute"}
+                      aria-label={
+                        isAudioMuted ? t("common.unmute") : t("common.mute")
+                      }
                     >
                       {isAudioMuted ? (
                         <VolumeX className="h-4 w-4" />
@@ -786,10 +740,10 @@ export function BreathingPractice({
             ) : (
               <div className="text-center space-y-4">
                 <div className="text-2xl font-bold text-slate-800 dark:text-slate-200">
-                  {locale === "en" ? "Complete!" : "Completo!"}
+                  {t("practices.breathing.ui.doneShort")}
                 </div>
                 <Button onClick={resetPractice} className="px-6 py-2">
-                  {locale === "en" ? "Practice Again" : "Praticar Novamente"}
+                  {t("practices.breathing.ui.again")}
                 </Button>
               </div>
             )}
@@ -814,14 +768,10 @@ export function BreathingPractice({
               </motion.div>
             </div>
             <h3 className="text-xl font-medium text-green-800 dark:text-green-200">
-              {locale === "en"
-                ? "Breathing Practice Complete"
-                : "Prática de Respiração Concluída"}
+              {t("practices.breathing.ui.completeTitle")}
             </h3>
             <p className="text-green-700 dark:text-green-300">
-              {locale === "en"
-                ? "Take a moment to notice how you feel after this breathing exercise."
-                : "Reserve um momento para notar como você se sente após este exercício de respiração."}
+              {t("practices.breathing.ui.completeMsg")}
             </p>
           </motion.div>
         )}

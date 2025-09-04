@@ -12,7 +12,7 @@ import {
   Flame,
   Clock,
   Calendar,
-  Award,
+  Award as AwardIcon,
   Target,
   Zap,
   Star,
@@ -47,7 +47,7 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
       );
       const totalSessions = sessions.length;
 
-      // Calculate current streak
+      // Current streak (allows "today" to be empty but keeps counting prior consecutive days)
       const calculateStreak = () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -67,7 +67,6 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
           if (hasSession) {
             streak++;
           } else if (i > 0) {
-            // Allow for today to not have a session yet
             break;
           }
         }
@@ -77,12 +76,12 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
 
       const currentStreak = calculateStreak();
 
-      // Check unique practices
+      // Unique practices
       const uniquePractices = new Set(
         sessions.map((session) => session.practice)
       );
 
-      // Check consistency (days with practice in last 30 days)
+      // Consistency (days with practice in last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       const recentSessions = sessions.filter(
@@ -98,22 +97,16 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
       const achievementList: Achievement[] = [
         {
           id: "first-session",
-          title: locale === "en" ? "First Steps" : "Primeiros Passos",
-          description:
-            locale === "en"
-              ? "Complete your first practice session"
-              : "Complete sua primeira sessão de prática",
+          title: t("profile.achievements.items.firstSession.title"),
+          description: t("profile.achievements.items.firstSession.description"),
           icon: <Star className="h-5 w-5" />,
           earned: totalSessions >= 1,
           color: "bg-yellow-500",
         },
         {
           id: "streak-3",
-          title: locale === "en" ? "Getting Started" : "Começando",
-          description:
-            locale === "en"
-              ? "Practice for 3 days in a row"
-              : "Pratique por 3 dias seguidos",
+          title: t("profile.achievements.items.streak3.title"),
+          description: t("profile.achievements.items.streak3.description"),
           icon: <Flame className="h-5 w-5" />,
           earned: currentStreak >= 3,
           progress: Math.min(currentStreak, 3),
@@ -122,11 +115,8 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         },
         {
           id: "streak-7",
-          title: locale === "en" ? "Week Warrior" : "Guerreiro da Semana",
-          description:
-            locale === "en"
-              ? "Practice for 7 days in a row"
-              : "Pratique por 7 dias seguidos",
+          title: t("profile.achievements.items.streak7.title"),
+          description: t("profile.achievements.items.streak7.description"),
           icon: <Flame className="h-5 w-5" />,
           earned: currentStreak >= 7,
           progress: Math.min(currentStreak, 7),
@@ -135,11 +125,8 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         },
         {
           id: "streak-30",
-          title: locale === "en" ? "Monthly Master" : "Mestre Mensal",
-          description:
-            locale === "en"
-              ? "Practice for 30 days in a row"
-              : "Pratique por 30 dias seguidos",
+          title: t("profile.achievements.items.streak30.title"),
+          description: t("profile.achievements.items.streak30.description"),
           icon: <Trophy className="h-5 w-5" />,
           earned: currentStreak >= 30,
           progress: Math.min(currentStreak, 30),
@@ -148,11 +135,8 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         },
         {
           id: "time-60",
-          title: locale === "en" ? "Hour Hero" : "Herói da Hora",
-          description:
-            locale === "en"
-              ? "Practice for 1 hour total"
-              : "Pratique por 1 hora no total",
+          title: t("profile.achievements.items.time60.title"),
+          description: t("profile.achievements.items.time60.description"),
           icon: <Clock className="h-5 w-5" />,
           earned: totalMinutes >= 60,
           progress: Math.min(totalMinutes, 60),
@@ -161,11 +145,8 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         },
         {
           id: "time-600",
-          title: locale === "en" ? "Time Master" : "Mestre do Tempo",
-          description:
-            locale === "en"
-              ? "Practice for 10 hours total"
-              : "Pratique por 10 horas no total",
+          title: t("profile.achievements.items.time600.title"),
+          description: t("profile.achievements.items.time600.description"),
           icon: <Clock className="h-5 w-5" />,
           earned: totalMinutes >= 600,
           progress: Math.min(totalMinutes, 600),
@@ -174,12 +155,8 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         },
         {
           id: "sessions-10",
-          title:
-            locale === "en" ? "Dedicated Practitioner" : "Praticante Dedicado",
-          description:
-            locale === "en"
-              ? "Complete 10 practice sessions"
-              : "Complete 10 sessões de prática",
+          title: t("profile.achievements.items.sessions10.title"),
+          description: t("profile.achievements.items.sessions10.description"),
           icon: <Target className="h-5 w-5" />,
           earned: totalSessions >= 10,
           progress: Math.min(totalSessions, 10),
@@ -188,12 +165,9 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         },
         {
           id: "sessions-50",
-          title: locale === "en" ? "Practice Pro" : "Profissional da Prática",
-          description:
-            locale === "en"
-              ? "Complete 50 practice sessions"
-              : "Complete 50 sessões de prática",
-          icon: <Award className="h-5 w-5" />,
+          title: t("profile.achievements.items.sessions50.title"),
+          description: t("profile.achievements.items.sessions50.description"),
+          icon: <AwardIcon className="h-5 w-5" />,
           earned: totalSessions >= 50,
           progress: Math.min(totalSessions, 50),
           target: 50,
@@ -201,11 +175,8 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         },
         {
           id: "all-practices",
-          title: locale === "en" ? "Explorer" : "Explorador",
-          description:
-            locale === "en"
-              ? "Try all practice types"
-              : "Experimente todos os tipos de prática",
+          title: t("profile.achievements.items.allPractices.title"),
+          description: t("profile.achievements.items.allPractices.description"),
           icon: <Zap className="h-5 w-5" />,
           earned: uniquePractices.size >= 4,
           progress: uniquePractices.size,
@@ -214,14 +185,8 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         },
         {
           id: "consistent",
-          title:
-            locale === "en"
-              ? "Consistency Champion"
-              : "Campeão da Consistência",
-          description:
-            locale === "en"
-              ? "Practice 20 days in the last month"
-              : "Pratique 20 dias no último mês",
+          title: t("profile.achievements.items.consistent.title"),
+          description: t("profile.achievements.items.consistent.description"),
           icon: <Calendar className="h-5 w-5" />,
           earned: consistencyDays >= 20,
           progress: Math.min(consistencyDays, 20),
@@ -234,7 +199,7 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
     };
 
     calculateAchievements();
-  }, [sessions, locale]);
+  }, [sessions, locale, t]);
 
   const earnedAchievements = achievements.filter((a) => a.earned);
   const inProgressAchievements = achievements.filter(
@@ -252,7 +217,7 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
             <Trophy className="h-5 w-5 text-yellow-500" />
           </div>
           <CardTitle className="text-xl font-semibold">
-            {locale === "en" ? "Achievements" : "Conquistas"}
+            {t("profile.achievements.title")}
           </CardTitle>
           <Badge variant="secondary" className="ml-auto">
             {earnedAchievements.length}/{achievements.length}
@@ -265,7 +230,7 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         {earnedAchievements.length > 0 && (
           <div className="space-y-3">
             <h4 className="font-medium text-slate-700 dark:text-slate-300">
-              {locale === "en" ? "Earned" : "Conquistadas"}
+              {t("profile.achievements.sections.earned")}
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {earnedAchievements.map((achievement, index) => (
@@ -290,7 +255,7 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
                     </div>
                   </div>
                   <div className="text-green-500">
-                    <Award className="h-4 w-4" />
+                    <AwardIcon className="h-4 w-4" />
                   </div>
                 </motion.div>
               ))}
@@ -302,7 +267,7 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         {inProgressAchievements.length > 0 && (
           <div className="space-y-3">
             <h4 className="font-medium text-slate-700 dark:text-slate-300">
-              {locale === "en" ? "In Progress" : "Em Progresso"}
+              {t("profile.achievements.sections.inProgress")}
             </h4>
             <div className="space-y-3">
               {inProgressAchievements.map((achievement) => (
@@ -361,7 +326,7 @@ export function AchievementBadges({ locale }: AchievementBadgesProps) {
         {lockedAchievements.length > 0 && (
           <div className="space-y-3">
             <h4 className="font-medium text-slate-700 dark:text-slate-300">
-              {locale === "en" ? "Locked" : "Bloqueadas"}
+              {t("profile.achievements.sections.locked")}
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {lockedAchievements.map((achievement) => (

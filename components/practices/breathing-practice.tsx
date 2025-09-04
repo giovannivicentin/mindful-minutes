@@ -139,12 +139,10 @@ export function BreathingPractice({
         setTimeRemaining((prev) => {
           const newTime = prev - 1;
           if (newTime <= 0) {
-            // Practice complete
             setIsPlaying(false);
             setIsComplete(true);
             audioRef.current?.pause();
             clearInterval(practiceIntervalRef.current!);
-            onComplete();
             return 0;
           }
           return newTime;
@@ -314,6 +312,14 @@ export function BreathingPractice({
     sessionStartTimeRef.current = null;
   };
 
+  const hasNotifiedCompleteRef = useRef(false);
+  useEffect(() => {
+    if (isComplete && !hasNotifiedCompleteRef.current) {
+      hasNotifiedCompleteRef.current = true;
+      setTimeout(() => onComplete(), 0);
+    }
+  }, [isComplete, onComplete]);
+
   const togglePlayPause = () => {
     setIsPlaying(!isPlaying);
     setIsPaused(!isPaused);
@@ -328,6 +334,7 @@ export function BreathingPractice({
     setPhaseTime(0);
     setTotalElapsedTime(0);
     setInhaleCount(1);
+    hasNotifiedCompleteRef.current = false;
     setTimeRemaining(duration * 60);
     phaseStartTimeRef.current = null;
     sessionStartTimeRef.current = null;

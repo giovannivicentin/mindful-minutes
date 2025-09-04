@@ -200,6 +200,9 @@ export const en = {
         instruction:
           "Find a comfortable position, either sitting or lying down. Close your eyes and take three deep breaths. We will systematically tense and relax different muscle groups throughout your body.",
       },
+      ui: {
+        completeMsg: "Take a moment to notice how relaxed your body feels.",
+      },
       segments: {
         toes: {
           title: "Toes",

@@ -247,11 +247,7 @@ export function MuscleRelaxationPractice({
 
           audioRef.current.addEventListener("error", (e) => {
             console.error("Audio loading error:", e);
-            setAudioError(
-              locale === "en"
-                ? "Unable to load background music. The practice will continue without audio."
-                : "Não foi possível carregar a música de fundo. A prática continuará sem áudio."
-            );
+            setAudioError(t("audio.error.load"));
             setAudioLoaded(false);
           });
 
@@ -264,11 +260,7 @@ export function MuscleRelaxationPractice({
         }
       } catch (error) {
         console.error("Audio initialization error:", error);
-        setAudioError(
-          locale === "en"
-            ? "Background music is not available. The practice will continue without audio."
-            : "A música de fundo não está disponível. A prática continuará sem áudio."
-        );
+        setAudioError(t("audio.error.unavailable"));
       }
     };
 
@@ -283,7 +275,7 @@ export function MuscleRelaxationPractice({
         audioRef.current = null;
       }
     };
-  }, [locale, audioVolume]);
+  }, [locale, audioVolume, t]);
 
   // Handle audio playback
   useEffect(() => {
@@ -291,17 +283,13 @@ export function MuscleRelaxationPractice({
       if (isPlaying && !isPaused && !isAudioMuted) {
         audioRef.current.play().catch((error) => {
           console.error("Audio playback error:", error);
-          setAudioError(
-            locale === "en"
-              ? "Unable to play background music. Please check your browser settings."
-              : "Não foi possível reproduzir a música de fundo. Verifique as configurações do seu navegador."
-          );
+          setAudioError(t("audio.error.play"));
         });
       } else {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, isPaused, isAudioMuted, audioLoaded, locale]);
+  }, [isPlaying, isPaused, isAudioMuted, audioLoaded, t]);
 
   // Update audio volume
   useEffect(() => {
@@ -787,6 +775,9 @@ export function MuscleRelaxationPractice({
                     variant="outline"
                     size="icon"
                     disabled={currentSegment === 0}
+                    aria-label={t(
+                      "practices.muscle-relaxation.controls.previous"
+                    )}
                     className="rounded-xl border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 bg-transparent"
                   >
                     <SkipBack className="h-4 w-4" />
@@ -796,6 +787,7 @@ export function MuscleRelaxationPractice({
                     onClick={pausePractice}
                     variant="outline"
                     size="icon"
+                    aria-label={t("timer.pause")}
                     className="rounded-xl border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 bg-transparent"
                   >
                     <Pause className="h-4 w-4" />
@@ -806,6 +798,7 @@ export function MuscleRelaxationPractice({
                     variant="outline"
                     size="icon"
                     disabled={currentSegment >= segments.length - 1}
+                    aria-label={t("practices.muscle-relaxation.controls.next")}
                     className="rounded-xl border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
                   >
                     <SkipForward className="h-4 w-4" />
@@ -816,6 +809,9 @@ export function MuscleRelaxationPractice({
                       onClick={toggleAudioMute}
                       variant="outline"
                       size="icon"
+                      aria-label={
+                        isAudioMuted ? t("common.unmute") : t("common.mute")
+                      }
                       className="rounded-xl border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 bg-transparent"
                     >
                       {isAudioMuted ? (
@@ -830,6 +826,7 @@ export function MuscleRelaxationPractice({
                     onClick={resetPractice}
                     variant="outline"
                     size="icon"
+                    aria-label={t("timer.reset")}
                     className="rounded-xl border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 bg-transparent"
                   >
                     <RotateCcw className="h-4 w-4" />
@@ -861,9 +858,7 @@ export function MuscleRelaxationPractice({
               {t("practices.muscle-relaxation.controls.complete")}
             </h3>
             <p className="text-green-700 dark:text-green-300">
-              {locale === "en"
-                ? "Take a moment to notice how relaxed your body feels."
-                : "Reserve um momento para notar como seu corpo se sente relaxado."}
+              {t("practices.muscle-relaxation.ui.completeMsg")}
             </p>
           </motion.div>
         )}

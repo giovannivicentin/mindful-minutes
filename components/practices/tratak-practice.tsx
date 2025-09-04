@@ -40,8 +40,8 @@ export function TratakPractice({
 }: TratakPracticeProps) {
   const t = useTranslation(locale);
   const { addSession } = useStore();
-  // Get the current theme
   const { theme } = useTheme();
+
   const [showControls, setShowControls] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -49,6 +49,7 @@ export function TratakPractice({
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(duration * 60);
   const [isComplete, setIsComplete] = useState(false);
+
   const tratakContainerRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -83,49 +84,40 @@ export function TratakPractice({
 
   // Timer logic
   useEffect(() => {
-    if (isPlaying && timeRemaining > 0) {
+    if (isPlaying && timeRemaining > 0 && !isPaused) {
       intervalRef.current = setInterval(() => {
         setTimeRemaining((prev) => {
           if (prev <= 1) {
             setIsPlaying(false);
             setIsComplete(true);
-            // Record session completion
             addSession({
               practice: "tratak",
               duration: duration,
               date: new Date().toISOString(),
             });
-            if (audioRef.current) {
-              audioRef.current.pause();
-            }
+            if (audioRef.current) audioRef.current.pause();
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
     } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     }
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPlaying, timeRemaining, duration, addSession]);
+  }, [isPlaying, timeRemaining, duration, addSession, isPaused]);
 
   // Check if audio files are available
   useEffect(() => {
     const checkAudioAvailability = async () => {
       try {
-        // Try to fetch the audio file to check if it exists
         const response = await fetch("/audio/meditation-bell.mp3", {
           method: "HEAD",
         });
         setAudioAvailable(response.ok);
-
         if (!response.ok) {
           console.warn(
             "Audio files not available. Sound features will be disabled."
@@ -136,7 +128,6 @@ export function TratakPractice({
         setAudioAvailable(false);
       }
     };
-
     checkAudioAvailability();
   }, []);
 
@@ -151,17 +142,15 @@ export function TratakPractice({
         } else if (
           (tratakContainerRef.current as any).webkitRequestFullscreen
         ) {
-          /* Safari */
           (tratakContainerRef.current as any).webkitRequestFullscreen();
         } else if ((tratakContainerRef.current as any).msRequestFullscreen) {
-          /* IE11 */
           (tratakContainerRef.current as any).msRequestFullscreen();
         }
       } catch (error) {
         console.error("Error entering fullscreen:", error);
         toast({
-          title: t("tratak.fullscreenError"),
-          description: t("tratak.fullscreenErrorDesc"),
+          title: t("practices.tratak.fullscreenError"),
+          description: t("practices.tratak.fullscreenErrorDesc"),
           variant: "destructive",
         });
       }
@@ -170,10 +159,8 @@ export function TratakPractice({
         if (document.exitFullscreen) {
           document.exitFullscreen();
         } else if ((document as any).webkitExitFullscreen) {
-          /* Safari */
           (document as any).webkitExitFullscreen();
         } else if ((document as any).msExitFullscreen) {
-          /* IE11 */
           (document as any).msExitFullscreen();
         }
       } catch (error) {
@@ -186,8 +173,6 @@ export function TratakPractice({
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
-
-      // Close any open popovers when entering fullscreen mode
       const popoverTrigger = document.querySelector('[data-state="open"]');
       if (popoverTrigger && document.fullscreenElement) {
         // @ts-ignore
@@ -196,31 +181,39 @@ export function TratakPractice({
     };
 
     document.addEventListener("fullscreenchange", handleFullscreenChange);
-    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
-    document.addEventListener("mozfullscreenchange", handleFullscreenChange);
-    document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+    document.addEventListener(
+      "webkitfullscreenchange",
+      handleFullscreenChange as any
+    );
+    document.addEventListener(
+      "mozfullscreenchange",
+      handleFullscreenChange as any
+    );
+    document.addEventListener(
+      "MSFullscreenChange",
+      handleFullscreenChange as any
+    );
 
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
       document.removeEventListener(
         "webkitfullscreenchange",
-        handleFullscreenChange
+        handleFullscreenChange as any
       );
       document.removeEventListener(
         "mozfullscreenchange",
-        handleFullscreenChange
+        handleFullscreenChange as any
       );
       document.removeEventListener(
         "MSFullscreenChange",
-        handleFullscreenChange
+        handleFullscreenChange as any
       );
     };
   }, []);
 
-  // Audio cue for beginning and end of session
+  // Audio cue for beginning of session
   useEffect(() => {
     if (isPlaying && !isMuted && audioAvailable) {
-      // Play start sound when session begins
       const playStartSound = async () => {
         try {
           const startSound = new Audio("/audio/meditation-bell.mp3");
@@ -231,12 +224,11 @@ export function TratakPractice({
           setAudioAvailable(false);
         }
       };
-
       playStartSound();
     }
   }, [isPlaying, isMuted, audioAvailable]);
 
-  // Handle ambient sound
+  // Ambient sound
   useEffect(() => {
     if (!audioAvailable) return;
 
@@ -274,9 +266,7 @@ export function TratakPractice({
     };
   }, [isPlaying, isMuted, audioAvailable]);
 
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
+  const togglePlayPause = () => setIsPlaying(!isPlaying);
 
   const resetPractice = () => {
     setIsPlaying(false);
@@ -288,13 +278,8 @@ export function TratakPractice({
     }
   };
 
-  const toggleMute = () => {
-    setIsMuted(!isMuted);
-  };
-
-  const toggleControls = () => {
-    setShowControls(!showControls);
-  };
+  const toggleMute = () => setIsMuted(!isMuted);
+  const toggleControls = () => setShowControls(!showControls);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -302,13 +287,11 @@ export function TratakPractice({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Calculate responsive sizes
+  // Responsive sizes
   const getResponsiveCircleSize = () => {
-    // Base the maximum size on viewport width
     const maxSize = Math.min(window.innerWidth * 0.8, 500);
     return (circleSize / 300) * maxSize;
   };
-
   const getResponsivePointSize = () => {
     const baseCircleSize = getResponsiveCircleSize();
     return (pointSize / 10) * (baseCircleSize / 10);
@@ -316,7 +299,7 @@ export function TratakPractice({
 
   return (
     <div className="flex flex-col items-center justify-center w-full space-y-8">
-      {/* Timer Display */}
+      {/* Timer */}
       <div className="text-center">
         <div className="text-3xl font-bold mb-2">
           {formatTime(timeRemaining)}
@@ -330,7 +313,7 @@ export function TratakPractice({
         </div>
       </div>
 
-      {/* Tratak practice area */}
+      {/* Tratak area */}
       <div
         ref={tratakContainerRef}
         className="relative flex flex-col items-center justify-center w-full transition-all duration-1000 rounded-lg overflow-hidden"
@@ -409,7 +392,11 @@ export function TratakPractice({
                   size="icon"
                   onClick={toggleMute}
                   className="bg-background/80 backdrop-blur-sm"
-                  aria-label={isMuted ? t("tratak.unmute") : t("tratak.mute")}
+                  aria-label={
+                    isMuted
+                      ? t("practices.tratak.unmute")
+                      : t("practices.tratak.mute")
+                  }
                 >
                   {isMuted ? (
                     <VolumeX className="h-4 w-4" />
@@ -426,8 +413,8 @@ export function TratakPractice({
                 className="bg-background/80 backdrop-blur-sm"
                 aria-label={
                   isFullscreen
-                    ? t("tratak.exitFullscreen")
-                    : t("tratak.fullscreen")
+                    ? t("practices.tratak.exitFullscreen")
+                    : t("practices.tratak.fullscreen")
                 }
               >
                 {isFullscreen ? (
@@ -437,7 +424,6 @@ export function TratakPractice({
                 )}
               </Button>
 
-              {/* Only show settings button when NOT in fullscreen mode */}
               {!isFullscreen && (
                 <Popover>
                   <PopoverTrigger asChild>
@@ -445,7 +431,7 @@ export function TratakPractice({
                       variant="outline"
                       size="icon"
                       className="bg-background/80 backdrop-blur-sm"
-                      aria-label={t("tratak.settings")}
+                      aria-label={t("practices.tratak.settings")}
                     >
                       <Settings className="h-4 w-4" />
                     </Button>
@@ -453,7 +439,9 @@ export function TratakPractice({
                   <PopoverContent className="w-80">
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-medium">{t("tratak.customize")}</h4>
+                        <h4 className="font-medium">
+                          {t("practices.tratak.customize")}
+                        </h4>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -465,7 +453,7 @@ export function TratakPractice({
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{t("tratak.circleSize")}</Label>
+                        <Label>{t("practices.tratak.circleSize")}</Label>
                         <Slider
                           value={[circleSize]}
                           min={100}
@@ -476,7 +464,7 @@ export function TratakPractice({
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{t("tratak.circleColor")}</Label>
+                        <Label>{t("practices.tratak.circleColor")}</Label>
                         <div className="flex gap-2">
                           {[
                             "#000000",
@@ -499,14 +487,16 @@ export function TratakPractice({
                               }`}
                               style={{ backgroundColor: color }}
                               onClick={() => setCircleColor(color)}
-                              aria-label={`${t("tratak.selectColor")} ${color}`}
+                              aria-label={`${t(
+                                "practices.tratak.selectColor"
+                              )} ${color}`}
                             />
                           ))}
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{t("tratak.pointSize")}</Label>
+                        <Label>{t("practices.tratak.pointSize")}</Label>
                         <Slider
                           value={[pointSize]}
                           min={2}
@@ -517,7 +507,7 @@ export function TratakPractice({
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{t("tratak.pointColor")}</Label>
+                        <Label>{t("practices.tratak.pointColor")}</Label>
                         <div className="flex gap-2">
                           {[
                             "#000000",
@@ -540,14 +530,16 @@ export function TratakPractice({
                               }`}
                               style={{ backgroundColor: color }}
                               onClick={() => setPointColor(color)}
-                              aria-label={`${t("tratak.selectColor")} ${color}`}
+                              aria-label={`${t(
+                                "practices.tratak.selectColor"
+                              )} ${color}`}
                             />
                           ))}
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{t("tratak.background")}</Label>
+                        <Label>{t("practices.tratak.background")}</Label>
                         <div className="flex gap-2">
                           {[
                             "#FFFFFF",
@@ -572,14 +564,16 @@ export function TratakPractice({
                               }`}
                               style={{ backgroundColor: color }}
                               onClick={() => setBackgroundColor(color)}
-                              aria-label={`${t("tratak.selectColor")} ${color}`}
+                              aria-label={`${t(
+                                "practices.tratak.selectColor"
+                              )} ${color}`}
                             />
                           ))}
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{t("tratak.brightness")}</Label>
+                        <Label>{t("practices.tratak.brightness")}</Label>
                         <Slider
                           value={[brightness]}
                           min={50}
@@ -596,7 +590,7 @@ export function TratakPractice({
                           onCheckedChange={setShowPulsation}
                         />
                         <Label htmlFor="pulsation">
-                          {t("tratak.pulsation")}
+                          {t("practices.tratak.pulsation")}
                         </Label>
                       </div>
                     </div>
@@ -622,7 +616,7 @@ export function TratakPractice({
                 size="icon"
                 onClick={toggleControls}
                 className="bg-background/20 backdrop-blur-sm"
-                aria-label={t("tratak.showControls")}
+                aria-label={t("practices.tratak.showControls")}
               >
                 <Settings className="h-4 w-4" />
               </Button>
@@ -647,19 +641,21 @@ export function TratakPractice({
         </Button>
       </div>
 
-      {/* Instructions - moved below the practice area */}
+      {/* Instructions */}
       <div className="text-center max-w-md mx-auto px-4 bg-card rounded-lg p-4 shadow-sm">
-        <h3 className="text-lg font-medium mb-2">{t("tratak.instructions")}</h3>
-        <p className="text-muted-foreground">{t("tratak.instructionsText")}</p>
+        <h3 className="text-lg font-medium mb-2">
+          {t("practices.tratak.instructions")}
+        </h3>
+        <p className="text-muted-foreground">
+          {t("practices.tratak.instructionsText")}
+        </p>
       </div>
 
       {/* Completion Message */}
       {isComplete && (
         <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
           <p className="text-green-800 dark:text-green-200 font-medium">
-            {locale === "en"
-              ? "Tratak practice complete! Well done."
-              : "Prática de Tratak completa! Muito bem."}
+            {t("practices.tratak.completeMsg")}
           </p>
         </div>
       )}

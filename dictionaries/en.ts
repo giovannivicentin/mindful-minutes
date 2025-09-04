@@ -190,6 +190,7 @@ export const en = {
       fullscreenError: "Fullscreen Error",
       fullscreenErrorDesc:
         "Unable to enter fullscreen mode. This may be due to browser restrictions.",
+      completeMsg: "Tratak practice complete! Well done.",
     },
     "muscle-relaxation": {
       title: "Progressive Muscle Relaxation",

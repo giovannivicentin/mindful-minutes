@@ -1,4 +1,4 @@
-export const pt = {
+export const ptBR = {
   navigation: {
     home: "Início",
     practices: "Práticas",

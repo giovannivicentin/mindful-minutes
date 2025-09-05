@@ -17,7 +17,7 @@ export const de = {
       badge: "Achtsamkeit leicht gemacht",
       popularPractices: "Beliebte Praktiken",
       startJourney: "Starte deine Reise",
-      sessionDuration: "Sitzungen von 7–21 Minuten",
+      sessionDuration: "Sitzungen von 1-21 Minuten",
     },
     featured: {
       title: "Empfohlene Praktiken",
@@ -32,7 +32,7 @@ export const de = {
       quick: {
         title: "Kurze Sitzungen",
         description:
-          "Integriere Achtsamkeit in deinen Alltag mit Sitzungen von 7–21 Minuten.",
+          "Integriere Achtsamkeit in deinen Alltag mit Sitzungen von 1-21 Minuten.",
       },
       stress: {
         title: "Stress reduzieren",
@@ -63,7 +63,7 @@ export const de = {
       "Wähle eine Praxis, um Angst und Stress zu reduzieren und Burnout vorzubeugen.",
     badge: "Wähle deine Praxis",
     stats: {
-      durationShort: "7–21 Minuten",
+      durationShort: "1-21 Minuten",
       scienceBacked: "Wissenschaftlich fundiert",
       instantRelief: "Schnelle Linderung",
     },

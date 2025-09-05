@@ -17,7 +17,7 @@ export const fr = {
       badge: "Pleine conscience simplifiée",
       popularPractices: "Pratiques populaires",
       startJourney: "Commencez votre parcours",
-      sessionDuration: "Séances de 7 à 21 minutes",
+      sessionDuration: "Séances de 1 à 21 minutes",
     },
     featured: {
       title: "Pratiques à la une",
@@ -32,7 +32,7 @@ export const fr = {
       quick: {
         title: "Séances rapides",
         description:
-          "Intégrez la pleine conscience à votre emploi du temps avec des séances de 7–21 minutes.",
+          "Intégrez la pleine conscience à votre emploi du temps avec des séances de 1-21 minutes.",
       },
       stress: {
         title: "Réduire le stress",
@@ -63,7 +63,7 @@ export const fr = {
       "Choisissez une pratique pour aider à réduire l’anxiété, le stress et prévenir le burnout.",
     badge: "Choisissez votre pratique",
     stats: {
-      durationShort: "7–21 minutes",
+      durationShort: "1-21 minutes",
       scienceBacked: "Validé scientifiquement",
       instantRelief: "Soulagement immédiat",
     },

@@ -17,7 +17,7 @@ export const ptBR = {
       badge: "Mindfulness descomplicado",
       popularPractices: "Práticas populares",
       startJourney: "Comece sua jornada",
-      sessionDuration: "Sessões de 7 a 21 minutos",
+      sessionDuration: "Sessões de 1 a 21 minutos",
     },
     featured: {
       title: "Práticas em destaque",
@@ -32,7 +32,7 @@ export const ptBR = {
       quick: {
         title: "Sessões rápidas",
         description:
-          "Inclua mindfulness na sua rotina com sessões de 7 a 21 minutos.",
+          "Inclua mindfulness na sua rotina com sessões de 1 a 21 minutos.",
       },
       stress: {
         title: "Reduza o estresse",
@@ -63,7 +63,7 @@ export const ptBR = {
       "Escolha uma prática para reduzir ansiedade, estresse e prevenir burnout.",
     badge: "Escolha sua prática",
     stats: {
-      durationShort: "7–21 minutos",
+      durationShort: "1-21 minutos",
       scienceBacked: "Com base científica",
       instantRelief: "Alívio imediato",
     },

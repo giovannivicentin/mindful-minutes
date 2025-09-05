@@ -17,7 +17,7 @@ export const ar = {
       badge: "اليقظة ببساطة",
       popularPractices: "ممارسات شائعة",
       startJourney: "ابدأ رحلتك",
-      sessionDuration: "جلسات من 7–21 دقيقة",
+      sessionDuration: "جلسات من 1–21 دقيقة",
     },
     featured: {
       title: "ممارسات مميزة",
@@ -30,7 +30,7 @@ export const ar = {
       subtitle: "بضع دقائق يوميًا قد تُحدث فرقًا ملحوظًا في رفاهيتك.",
       quick: {
         title: "جلسات سريعة",
-        description: "ادمج اليقظة في جدولك المزدحم بجلسات من 7–21 دقيقة.",
+        description: "ادمج اليقظة في جدولك المزدحم بجلسات من 1–21 دقيقة.",
       },
       stress: {
         title: "تقليل التوتر",
@@ -59,7 +59,7 @@ export const ar = {
       "اختر ممارسة تساعدك على تقليل القلق والتوتر والوقاية من الاحتراق النفسي.",
     badge: "اختر ممارستك",
     stats: {
-      durationShort: "7–21 دقيقة",
+      durationShort: "1–21 دقيقة",
       scienceBacked: "مدعومة علميًا",
       instantRelief: "راحة فورية",
     },

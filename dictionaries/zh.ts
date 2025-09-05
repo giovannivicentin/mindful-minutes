@@ -16,7 +16,7 @@ export const zh = {
       badge: "把正念变简单",
       popularPractices: "热门练习",
       startJourney: "开启你的旅程",
-      sessionDuration: "每次 7–21 分钟",
+      sessionDuration: "每次 1-21 分钟",
     },
     featured: {
       title: "精选练习",
@@ -28,7 +28,7 @@ export const zh = {
       subtitle: "每天只需几分钟，就能对你的身心健康产生显著影响。",
       quick: {
         title: "短时会话",
-        description: "以 7–21 分钟的会话，把正念融入繁忙日程。",
+        description: "以 1-21 分钟的会话，把正念融入繁忙日程。",
       },
       stress: {
         title: "降低压力",
@@ -54,7 +54,7 @@ export const zh = {
     description: "选择一种练习以帮助减轻焦虑与压力，预防倦怠。",
     badge: "选择你的练习",
     stats: {
-      durationShort: "7–21 分钟",
+      durationShort: "1-21 分钟",
       scienceBacked: "科学依据",
       instantRelief: "即时缓解",
     },

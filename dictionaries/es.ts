@@ -17,7 +17,7 @@ export const es = {
       badge: "Mindfulness hecho simple",
       popularPractices: "Prácticas populares",
       startJourney: "Empieza tu camino",
-      sessionDuration: "Sesiones de 7 a 21 minutos",
+      sessionDuration: "Sesiones de 1 a 21 minutos",
     },
     featured: {
       title: "Prácticas destacadas",
@@ -32,7 +32,7 @@ export const es = {
       quick: {
         title: "Sesiones rápidas",
         description:
-          "Integra la atención plena en tu agenda con sesiones de 7 a 21 minutos.",
+          "Integra la atención plena en tu agenda con sesiones de 1 a 21 minutos.",
       },
       stress: {
         title: "Reduce el estrés",
@@ -63,7 +63,7 @@ export const es = {
       "Elige una práctica para ayudar a reducir la ansiedad, el estrés y prevenir el burnout.",
     badge: "Elige tu práctica",
     stats: {
-      durationShort: "7–21 minutos",
+      durationShort: "1-21 minutos",
       scienceBacked: "Con respaldo científico",
       instantRelief: "Alivio inmediato",
     },

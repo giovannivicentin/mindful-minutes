@@ -17,7 +17,7 @@ export const ja = {
       badge: "シンプルなマインドフルネス",
       popularPractices: "人気のプラクティス",
       startJourney: "旅を始める",
-      sessionDuration: "7～21分のセッション",
+      sessionDuration: "1～21分のセッション",
     },
     featured: {
       title: "注目のプラクティス",
@@ -32,7 +32,7 @@ export const ja = {
       quick: {
         title: "短時間セッション",
         description:
-          "7～21分のセッションで、忙しい一日の中にも取り入れられます。",
+          "1～21分のセッションで、忙しい一日の中にも取り入れられます。",
       },
       stress: {
         title: "ストレスを軽減",
@@ -62,7 +62,7 @@ export const ja = {
       "不安・ストレスの軽減やバーンアウト予防を助けるプラクティスを選びましょう。",
     badge: "プラクティスを選ぶ",
     stats: {
-      durationShort: "7～21分",
+      durationShort: "1～21分",
       scienceBacked: "科学的根拠あり",
       instantRelief: "即効性",
     },

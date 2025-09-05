@@ -17,7 +17,7 @@ export const en = {
       badge: "Mindfulness Made Simple",
       popularPractices: "Popular Practices",
       startJourney: "Start Your Journey",
-      sessionDuration: "Sessions from 7-21 minutes",
+      sessionDuration: "Sessions from 1-21 minutes",
     },
     featured: {
       title: "Featured Practices",
@@ -32,7 +32,7 @@ export const en = {
       quick: {
         title: "Quick Sessions",
         description:
-          "Fit mindfulness into your busy schedule with sessions of 7-21 minutes.",
+          "Fit mindfulness into your busy schedule with sessions of 1-21 minutes.",
       },
       stress: {
         title: "Reduce Stress",
@@ -63,7 +63,7 @@ export const en = {
       "Choose a practice to help reduce anxiety, stress, and prevent burnout.",
     badge: "Choose Your Practice",
     stats: {
-      durationShort: "7-21 minutes",
+      durationShort: "1-21 minutes",
       scienceBacked: "Science-backed",
       instantRelief: "Instant relief",
     },

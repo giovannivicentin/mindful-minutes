@@ -485,4 +485,8 @@ export const zh = {
       play: "无法播放背景音乐。请检查浏览器设置。",
     },
   },
+  footer: {
+    builtBy: "由…开发",
+    copyright: "© {{year}} {{app}}. 版权所有。",
+  },
 };

@@ -508,4 +508,8 @@ export const en = {
       play: "Unable to play background music. Please check your browser settings.",
     },
   },
+  footer: {
+    builtBy: "Built by",
+    copyright: "© {{year}} {{app}}. All rights reserved.",
+  },
 };

@@ -509,4 +509,8 @@ export const ptBR = {
       play: "Não foi possível reproduzir a música de fundo. Verifique as configurações do seu navegador.",
     },
   },
+  footer: {
+    builtBy: "Desenvolvido por",
+    copyright: "© {{year}} {{app}}. Todos os direitos reservados.",
+  },
 };

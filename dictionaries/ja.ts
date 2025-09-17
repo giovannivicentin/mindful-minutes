@@ -506,4 +506,8 @@ export const ja = {
       play: "BGMを再生できません。ブラウザの設定をご確認ください。",
     },
   },
+  footer: {
+    builtBy: "開発者：",
+    copyright: "© {{year}} {{app}}. 無断複製・転載を禁じます。",
+  },
 };

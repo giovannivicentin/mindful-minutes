@@ -509,4 +509,8 @@ export const fr = {
       play: "Impossible de lire la musique de fond. Vérifiez les paramètres de votre navigateur.",
     },
   },
+  footer: {
+    builtBy: "Conçu par",
+    copyright: "© {{year}} {{app}}. Tous droits réservés.",
+  },
 };

@@ -11,18 +11,75 @@ import { Footer } from "@/components/footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Mindful Minutes",
-  description: "Quick sessions to lower anxiety, stress and prevent burnout",
-  manifest: "/manifest.json",
-};
-
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#020817" },
+  title: "Mindful Minutes - Transform Your Day with Mindfulness",
+  description:
+    "Simple, guided mindfulness practices to reduce stress, improve focus, and enhance well-being. Just a few minutes can make all the difference.",
+  keywords: [
+    "mindfulness",
+    "meditation",
+    "breathing exercises",
+    "stress relief",
+    "mental health",
+    "wellness",
   ],
-  width: "device-width",
-  initialScale: 1,
+  authors: [{ name: "Giovanni Vicentin", url: "https://giovannivicentin.com" }],
+  creator: "Giovanni Vicentin",
+  publisher: "Giovanni Vicentin",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://mindfulminutes.app"),
+  alternates: {
+    canonical: "/",
+    languages: {
+      "en-US": "/en",
+      "pt-BR": "/pt-BR",
+      "es-ES": "/es",
+      "fr-FR": "/fr",
+      "de-DE": "/de",
+      "zh-CN": "/zh",
+      "ja-JP": "/ja",
+      "ar-SA": "/ar",
+    },
+  },
+  openGraph: {
+    title: "Mindful Minutes - Transform Your Day with Mindfulness",
+    description:
+      "Simple, guided mindfulness practices to reduce stress, improve focus, and enhance well-being.",
+    url: "https://mindfulminutes.app",
+    siteName: "Mindful Minutes",
+    locale: "pt_BR",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Mindful Minutes - Mindfulness Made Simple",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mindful Minutes - Transform Your Day with Mindfulness",
+    description:
+      "Simple, guided mindfulness practices to reduce stress, improve focus, and enhance well-being.",
+    creator: "@giovannivicentin",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -33,19 +90,11 @@ export default function RootLayout({
   params: { locale?: string };
 }) {
   const locale = params.locale || "en";
-
-  const isRtl = locale === "ar";
-
   const validLocale = Object.keys(dictionaries).includes(locale)
     ? locale
     : "en";
-
   return (
-    <html
-      lang={validLocale}
-      dir={isRtl ? "rtl" : "ltr"}
-      suppressHydrationWarning
-    >
+    <html lang={validLocale} suppressHydrationWarning>
       <body className={inter.className}>
         <I18nProvider locale={validLocale}>
           <ThemeProvider
@@ -57,8 +106,8 @@ export default function RootLayout({
             <div className="flex min-h-screen flex-col">
               <Navigation />
               <main className="flex-1">{children}</main>
+              <Footer />
             </div>
-            <Footer />
           </ThemeProvider>
         </I18nProvider>
       </body>

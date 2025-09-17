@@ -510,4 +510,8 @@ export const de = {
       play: "Hintergrundmusik kann nicht wiedergegeben werden. Bitte überprüfe deine Browser-Einstellungen.",
     },
   },
+  footer: {
+    builtBy: "Erstellt von",
+    copyright: "© {{year}} {{app}}. Alle Rechte vorbehalten.",
+  },
 };

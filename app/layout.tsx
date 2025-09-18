@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     title: "Mindful Minutes - Transform Your Day with Mindfulness",
     description:
       "Simple, guided mindfulness practices to reduce stress, improve focus, and enhance well-being.",
-    url: "https://mindfulminutes.app",
+    url: "https://mindfulminutes.giovannivicentin.com",
     siteName: "Mindful Minutes",
     locale: "pt_BR",
     type: "website",

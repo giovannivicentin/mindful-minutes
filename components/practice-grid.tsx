@@ -153,23 +153,6 @@ export function PracticeGrid({ locale }: { locale: string }) {
 
   return (
     <div className="w-full">
-      {/* Header with Logo */}
-      <div className="text-center mb-16">
-        <div className="flex flex-col items-center justify-center mb-6">
-          <div className="inline-block p-3 bg-primary/10 rounded-full mb-4">
-            <div className="p-4 bg-primary/20 rounded-full">
-              <Leaf className="h-10 w-10 text-primary" />
-            </div>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60">
-            {t("practices.title")}
-          </h2>
-          <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
-            {t("practices.description")}
-          </p>
-        </div>
-      </div>
-
       {/* Practice Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-8xl mx-auto">
         {practices.map((practice, index) => (
@@ -182,15 +165,6 @@ export function PracticeGrid({ locale }: { locale: string }) {
             locale={locale}
           />
         ))}
-      </div>
-
-      {/* Enhanced Call to Action */}
-      <div className="text-center mt-20">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <p className="text-muted-foreground text-lg leading-relaxed">
-            {t("practices.cta.subtitle")}
-          </p>
-        </div>
       </div>
     </div>
   );

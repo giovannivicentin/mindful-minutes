@@ -69,7 +69,7 @@ export const ptBR = {
     },
     cta: {
       badge: "Comece sua jornada de bem-estar",
-      title: "Pronte para encontrar sua calma?",
+      title: "Pronto para encontrar sua calma?",
       subtitle:
         "Cada prática foi desenhada para reduzir o estresse, melhorar o foco e elevar seu bem-estar em poucos minutos.",
       hint: "Escolha uma prática acima para começar",
@@ -348,7 +348,7 @@ export const ptBR = {
       longestStreakLabel: "maior sequência",
       messages: {
         new: "Comece sua primeira sequência!",
-        broken: "Pronte para iniciar uma nova sequência?",
+        broken: "Pronto para iniciar uma nova sequência?",
         start: "Ótimo começo! Continue!",
         momentum: "Ganhando ritmo!",
         fire: "Você está voando!",
